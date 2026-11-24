@@ -1,9 +1,18 @@
 // ============================================================================
-// w.poetry - Dữ liệu cấu hình, tuyển tập thơ & Firebase Sync
+// Thiên Minh | w.poetry - Dữ liệu cấu hình, tuyển tập thơ & Firebase Sync
 // Tác giả: Nhật Huy (Bút danh: Thiên Minh)
 // ============================================================================
 
 window.POETRY_DATA = {
+  // Thông tin nhận diện trang web (Hiển thị tiêu đề, nút Copy Link & QR Code)
+  siteInfo: {
+    title: "Thiên Minh | w.poetry",
+    shareUrl: "", // Để trống sẽ tự động lấy link trang web hiện tại (window.location.href)
+    featuredHeading: "Tuyển tập nổi bật",
+    guestbookTitle: "Gửi lời nhắn cho Thiên Minh",
+    guestbookSubtitle: "Một vài dòng cảm nhận hoặc lời chào dịu dàng gửi đến góc viết của Nhật Huy."
+  },
+
   // 1. Cấu hình Firebase Console (Thay bằng thông số dự án Firebase của bạn)
   // Khi cấu hình xong, mọi thay đổi của Admin (thơ mới, chỉnh sửa, bình luận, hồ sơ)
   // sẽ tự động đồng bộ thời gian thực (Realtime) lên tất cả thiết bị User.
