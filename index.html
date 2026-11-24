@@ -1,0 +1,2362 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>w.poetry — Nhật Huy (Thiên Minh)</title>
+  <meta name="description" content="Không gian thơ cá nhân của Nhật Huy (Bút danh: Thiên Minh) — Trầm mặc, điềm tĩnh và sâu lắng." />
+
+  <!-- Google Fonts: Serif văn học cho thơ & Sans-serif hiện đại cho giao diện -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- EmailJS SDK (Tùy chọn gửi lời nhắn về Gmail) -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+  <!-- Dữ liệu tách biệt -->
+  <script src="data.js"></script>
+
+  <style>
+    /* ==========================================================================
+       1. BIẾN MÀU SẮC & CHỦ ĐỀ (Nền kem ấm ban ngày / Xám than-xanh đen ban đêm)
+       ========================================================================== */
+    :root {
+      --bg-primary: #faf6f0;
+      --bg-secondary: #f3ece1;
+      --bg-card: rgba(255, 252, 247, 0.85);
+      --bg-glass: rgba(250, 246, 240, 0.78);
+      --text-primary: #2b2623;
+      --text-secondary: #685f58;
+      --text-muted: #968c83;
+      --accent: #8c6249;
+      --accent-soft: rgba(140, 98, 73, 0.12);
+      --accent-hover: #734e38;
+      --border-color: rgba(140, 98, 73, 0.18);
+      --shadow-soft: 0 12px 32px -8px rgba(43, 38, 35, 0.08);
+      --shadow-card: 0 8px 24px -6px rgba(43, 38, 35, 0.06);
+      --font-serif: 'Lora', 'Cormorant Garamond', Georgia, serif;
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --poem-font-size: 1.125rem;
+      --radius-lg: 22px;
+      --radius-md: 14px;
+      --radius-pill: 999px;
+      --transition: all 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #11151c;
+      --bg-secondary: #181e28;
+      --bg-card: rgba(24, 30, 40, 0.86);
+      --bg-glass: rgba(17, 21, 28, 0.82);
+      --text-primary: #edeae4;
+      --text-secondary: #a8b0bd;
+      --text-muted: #727b8a;
+      --accent: #d4a373;
+      --accent-soft: rgba(212, 163, 115, 0.14);
+      --accent-hover: #e2b68a;
+      --border-color: rgba(212, 163, 115, 0.18);
+      --shadow-soft: 0 16px 36px -8px rgba(0, 0, 0, 0.45);
+      --shadow-card: 0 10px 28px -6px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.65;
+      min-height: 100vh;
+      transition: background-color 0.45s ease, color 0.45s ease;
+      overflow-x: hidden;
+      padding-bottom: 96px;
+    }
+
+    /* Nền họa tiết ánh sáng mềm mại */
+    body::before {
+      content: "";
+      position: fixed;
+      top: -15%;
+      right: -10%;
+      width: 480px;
+      height: 480px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Thanh tiến độ đọc phía trên cùng */
+    .reading-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), #d4a373);
+      z-index: 9999;
+      transition: width 0.12s ease-out;
+    }
+
+    /* ==========================================================================
+       2. TOP BAR (Thương hiệu, Đồng hồ thiết bị, Chế độ Sáng/Tối)
+       ========================================================================== */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: var(--bg-glass);
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 20px;
+    }
+
+    .top-bar-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-size: 1.55rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--text-primary);
+    }
+
+    .brand-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .top-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .clock-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .sync-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #4caf50;
+      display: inline-block;
+      title: "Đồng bộ dữ liệu";
+    }
+
+    .theme-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .theme-btn:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    /* ==========================================================================
+       3. CONTAINER CHÍNH & HIỆU ỨNG CHUYỂN TAB
+       ========================================================================== */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 28px 20px 40px;
+    }
+
+    .tab-view {
+      display: none;
+      animation: fadeSlideUp 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .tab-view.active {
+      display: block;
+    }
+
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ==========================================================================
+       4. HOME TAB (Ở GIỮA: AVT, Nhật Huy, Thiên Minh, Thẻ giới thiệu ấn mở, w.bio)
+       ========================================================================== */
+    .poet-hero {
+      text-align: center;
+      padding: 28px 22px;
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-soft);
+      margin-bottom: 32px;
+      position: relative;
+    }
+
+    .poet-avatar-wrap {
+      width: 108px;
+      height: 108px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      padding: 4px;
+      background: linear-gradient(135deg, var(--accent), transparent 75%);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .poet-avatar {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      background: var(--bg-secondary);
+    }
+
+    .poet-name {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      line-height: 1.2;
+    }
+
+    .poet-penname {
+      font-family: var(--font-serif);
+      font-size: 0.98rem;
+      font-style: italic;
+      color: var(--accent);
+      margin-top: 4px;
+      margin-bottom: 16px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .btn-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: var(--radius-pill);
+      font-size: 0.88rem;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      transition: var(--transition);
+    }
+
+    .btn-pill:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .btn-pill.primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .btn-pill.primary:hover {
+      background: var(--accent-hover);
+    }
+
+    /* Thẻ giới thiệu thi gia - Chỉ hiển thị khi ấn vào */
+    .intro-drawer {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease, margin 0.4s ease;
+      margin-top: 0;
+    }
+
+    .intro-drawer.open {
+      max-height: 750px;
+      opacity: 1;
+      margin-top: 20px;
+    }
+
+    .intro-card-inner {
+      text-align: left;
+      padding: 22px 24px;
+      border-radius: var(--radius-md);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+    }
+
+    .intro-quote {
+      font-family: var(--font-serif);
+      font-size: 1.03rem;
+      line-height: 1.85;
+      color: var(--text-primary);
+      text-align: justify;
+    }
+
+    .intro-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px dashed var(--border-color);
+      font-size: 0.88rem;
+    }
+
+    @media (max-width: 640px) {
+      .intro-meta-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .intro-meta-box h4 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .milestone-list {
+      list-style: none;
+      color: var(--text-secondary);
+    }
+
+    .milestone-list li {
+      margin-bottom: 4px;
+    }
+
+    /* Tuyển tập nổi bật ở Home Tab */
+    .section-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .section-heading h2 {
+      font-family: var(--font-display);
+      font-size: 1.55rem;
+      font-weight: 600;
+    }
+
+    .featured-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 18px;
+      margin-bottom: 36px;
+    }
+
+    .featured-card {
+      padding: 20px;
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-card);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .featured-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+    }
+
+    .featured-verse {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1.02rem;
+      line-height: 1.7;
+      color: var(--text-primary);
+      margin-bottom: 14px;
+      padding-left: 12px;
+      border-left: 2px solid var(--accent);
+      white-space: pre-line;
+    }
+
+    .featured-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+    }
+
+    /* Form gửi lời nhắn cho thi gia */
+    .guestbook-box {
+      padding: 24px;
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+    }
+
+    .guestbook-box h3 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      margin-bottom: 6px;
+    }
+
+    .guestbook-box p {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .input-field:focus {
+      border-color: var(--accent);
+    }
+
+    textarea.input-field {
+      resize: vertical;
+      min-height: 86px;
+    }
+
+    /* ==========================================================================
+       5. TAB THƠ (PHÍA TRÁI: Thanh tab trượt, tìm kiếm, thẻ thơ, Spotify, tương tác)
+       ========================================================================== */
+    .search-filter-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .search-input-wrap {
+      position: relative;
+      flex: 1;
+    }
+
+    .search-input-wrap input {
+      padding-left: 38px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    /* Thanh tab trượt ngang các tập thơ */
+    .collection-scroller-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+
+    .collection-tabs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding: 4px 2px;
+      flex: 1;
+    }
+
+    .collection-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .col-chip {
+      white-space: nowrap;
+      padding: 7px 16px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .col-chip.active,
+    .col-chip:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    /* Danh sách thẻ thơ */
+    .poem-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .poem-card {
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .poem-card:hover {
+      border-color: var(--accent);
+    }
+
+    .poem-card-cover {
+      width: 100%;
+      height: 230px;
+      object-fit: cover;
+      display: block;
+      cursor: pointer;
+    }
+
+    .poem-card-body {
+      padding: 20px 22px;
+    }
+
+    .poem-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .author-mini {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .author-mini img {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid var(--border-color);
+    }
+
+    .author-mini-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .author-mini-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .poem-time {
+      font-size: 0.77rem;
+      color: var(--text-muted);
+    }
+
+    .poem-badge {
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .poem-card-title {
+      font-family: var(--font-display);
+      font-size: 1.65rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .poem-card-title:hover {
+      color: var(--accent);
+    }
+
+    .poem-excerpt {
+      font-family: var(--font-serif);
+      font-size: 1.04rem;
+      line-height: 1.85;
+      color: var(--text-primary);
+      white-space: pre-line;
+      max-width: 62ch;
+      margin-bottom: 16px;
+      cursor: pointer;
+    }
+
+    /* Trình phát nhạc Spotify nhúng gọn trong thẻ thơ */
+    .spotify-embed-box {
+      margin: 14px 0 16px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+    }
+
+    .spotify-embed-box iframe {
+      display: block;
+      width: 100%;
+      height: 80px;
+      border: none;
+    }
+
+    /* Thanh tương tác thẻ thơ: Thích, Yêu thích, Bình luận, Đọc chi tiết, Chia sẻ */
+    .poem-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .reaction-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .react-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      font-size: 0.83rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .react-btn:hover,
+    .react-btn.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* ==========================================================================
+       6. MODAL ĐỌC THƠ CHI TIẾT & ZEN MODE + TẠO THẺ TRÍCH DẪN (QUOTE CARD)
+       ========================================================================== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(12, 14, 18, 0.72);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .reader-modal {
+      width: 100%;
+      max-width: 740px;
+      max-height: 92vh;
+      overflow-y: auto;
+      border-radius: var(--radius-lg);
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-soft);
+      padding: 28px 26px;
+      position: relative;
+      animation: fadeSlideUp 0.3s ease;
+    }
+
+    .reader-modal.zen-active {
+      max-width: 100vw;
+      width: 100vw;
+      height: 100vh;
+      max-height: 100vh;
+      border-radius: 0;
+      padding: 40px 24px 80px;
+    }
+
+    .reader-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .reader-poem-container {
+      max-width: 60ch;
+      margin: 0 auto;
+    }
+
+    .reader-title {
+      font-family: var(--font-display);
+      font-size: 2.1rem;
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+
+    .reader-meta {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 22px;
+    }
+
+    .reader-cover {
+      width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      border-radius: var(--radius-md);
+      margin-bottom: 24px;
+    }
+
+    .reader-content {
+      font-family: var(--font-serif);
+      font-size: var(--poem-font-size);
+      line-height: 1.95;
+      white-space: pre-line;
+      color: var(--text-primary);
+      margin-bottom: 28px;
+    }
+
+    .author-note-box {
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-secondary);
+      border-left: 3px solid var(--accent);
+      margin-bottom: 24px;
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+    }
+
+    .comment-section {
+      margin-top: 26px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .comment-item {
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: var(--bg-secondary);
+      margin-bottom: 10px;
+      font-size: 0.88rem;
+    }
+
+    .comment-item-head {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+      margin-bottom: 4px;
+      font-size: 0.83rem;
+    }
+
+    /* Quote Card Preview */
+    .quote-card-preview {
+      padding: 32px 28px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(145deg, var(--bg-secondary), var(--bg-primary));
+      border: 1px solid var(--accent);
+      text-align: center;
+      margin: 16px 0;
+    }
+
+    .quote-card-text {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1.2rem;
+      line-height: 1.8;
+      white-space: pre-line;
+      margin-bottom: 16px;
+    }
+
+    /* ==========================================================================
+       7. TAB HỒ SƠ CÁ NHÂN (PHÍA PHẢI: Admin + User Social Login + Studio Quản Trị)
+       ========================================================================== */
+    .profile-card {
+      padding: 26px;
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-card);
+      margin-bottom: 22px;
+    }
+
+    .auth-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 720px) {
+      .auth-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .auth-box {
+      padding: 22px;
+      border-radius: var(--radius-md);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+    }
+
+    .auth-box h3 {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      margin-bottom: 6px;
+    }
+
+    .social-login-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 11px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .social-btn:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .admin-panel {
+      margin-top: 24px;
+      padding: 24px;
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      border: 1px solid var(--accent);
+    }
+
+    .admin-poem-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 12px;
+      background: var(--bg-secondary);
+      margin-bottom: 10px;
+    }
+
+    /* ==========================================================================
+       8. THANH ĐIỀU HƯỚNG DƯỚI CÙNG (3 TAB: THƠ TRÁI - HOME GIỮA - HỒ SƠ PHẢI)
+       ========================================================================== */
+    .bottom-nav {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: var(--radius-pill);
+      background: var(--bg-glass);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      padding: 8px 22px;
+      border-radius: var(--radius-pill);
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: 0.76rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .nav-item.center-home {
+      padding: 10px 26px;
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .nav-item.active {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 6px 16px rgba(140, 98, 73, 0.28);
+    }
+
+    .nav-item svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Toast thông báo */
+    .toast {
+      position: fixed;
+      top: 72px;
+      right: 20px;
+      z-index: 3000;
+      padding: 11px 18px;
+      border-radius: 12px;
+      background: var(--text-primary);
+      color: var(--bg-primary);
+      font-size: 0.85rem;
+      box-shadow: var(--shadow-soft);
+      opacity: 0;
+      transform: translateY(-10px);
+      pointer-events: none;
+      transition: var(--transition);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <!-- Thanh tiến độ đọc -->
+  <div class="reading-progress" id="readingProgress"></div>
+
+  <!-- Thông báo nhanh -->
+  <div class="toast" id="toast"></div>
+
+  <!-- TOP BAR -->
+  <header class="top-bar">
+    <div class="top-bar-inner">
+      <div class="brand" onclick="switchTab('home')">
+        <span class="brand-title">w.poetry</span>
+        <span class="brand-sub">Thiên Minh</span>
+      </div>
+
+      <div class="top-controls">
+        <div class="clock-pill" title="Giờ đồng bộ thiết bị & trạng thái lưu trữ">
+          <span class="sync-dot" id="syncStatusDot"></span>
+          <span id="deviceClock">--:--</span>
+        </div>
+        <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Chuyển chế độ Sáng / Tối (Tự động theo giờ)">
+          <span id="themeIcon">☀️</span>
+          <span id="themeLabel">Ban ngày</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- NỘI DUNG CHÍNH 3 TAB -->
+  <main class="container">
+    <!-- ======================================================================
+         TAB 1 (TRÁI): TAB THƠ (Thanh trượt tập thơ, tìm kiếm, thẻ thơ, Spotify)
+         ====================================================================== -->
+    <section id="tab-poetry" class="tab-view">
+      <div class="search-filter-bar">
+        <div class="search-input-wrap">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="poemSearchInput" class="input-field" placeholder="Tìm tên bài thơ, câu thơ, thể loại..." oninput="renderPoetryFeed()" />
+        </div>
+      </div>
+
+      <!-- Thanh tab trượt phía trên: Tất cả, tập thơ... (Admin có thể thêm/bớt) -->
+      <div class="collection-scroller-wrap">
+        <div class="collection-tabs" id="collectionTabs"></div>
+        <button id="manageCollectionsBtn" class="btn-pill hidden" onclick="promptAddCollection()" title="Thêm tập thơ mới">+ Tập</button>
+      </div>
+
+      <!-- Danh sách thẻ thơ -->
+      <div class="poem-feed" id="poemFeed"></div>
+    </section>
+
+    <!-- ======================================================================
+         TAB 2 (GIỮA): HOME TAB (AVT, Nhật Huy, Thiên Minh, Thẻ giới thiệu ấn mở, w.bio)
+         ====================================================================== -->
+    <section id="tab-home" class="tab-view active">
+      <div class="poet-hero">
+        <div class="poet-avatar-wrap">
+          <img id="heroAvatar" class="poet-avatar" src="" alt="Nhật Huy - Thiên Minh" />
+        </div>
+        <h1 class="poet-name" id="heroName">Nhật Huy</h1>
+        <p class="poet-penname" id="heroPenName">Bút danh: Thiên Minh</p>
+
+        <div class="hero-actions">
+          <button class="btn-pill primary" id="toggleIntroBtn" onclick="toggleIntroCard()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+            </svg>
+            <span id="toggleIntroText">Lời ngỏ thi gia</span>
+          </button>
+
+          <a id="heroBioLink" class="btn-pill" href="https://nhztwiie.github.io/w" target="_blank" rel="noopener noreferrer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+            </svg>
+            <span id="heroBioLabel">Nhật Huy | w.bio</span>
+          </a>
+        </div>
+
+        <!-- Thẻ giới thiệu thi gia - Chỉ hiển thị đoạn giới thiệu khi ấn vào -->
+        <div class="intro-drawer" id="introDrawer">
+          <div class="intro-card-inner">
+            <p class="intro-quote" id="heroIntroText"></p>
+
+            <div class="intro-meta-grid">
+              <div class="intro-meta-box">
+                <h4>Triết lý sáng tác</h4>
+                <p id="heroPhilosophy" style="color: var(--text-secondary);"></p>
+              </div>
+              <div class="intro-meta-box">
+                <h4>Dấu ấn & Kênh kết nối</h4>
+                <ul class="milestone-list" id="heroMilestones"></ul>
+                <div id="heroSocialLinks" style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 8px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tuyển tập nổi bật (3-5 bài tiêu biểu kèm cặp câu mở màn) -->
+      <div class="section-heading">
+        <h2>Tuyển tập nổi bật</h2>
+        <button class="btn-pill" onclick="switchTab('poetry')">Xem tất cả thơ →</button>
+      </div>
+      <div class="featured-grid" id="featuredGrid"></div>
+
+      <!-- Form gửi lời nhắn / cảm nhận cho tác giả (Hỗ trợ EmailJS) -->
+      <div class="guestbook-box">
+        <h3>Gửi lời nhắn cho Thiên Minh</h3>
+        <p>Một vài dòng cảm nhận hoặc lời chào dịu dàng gửi đến góc viết của Nhật Huy.</p>
+        <form id="guestbookForm" onsubmit="handleGuestbookSubmit(event)">
+          <div class="form-row">
+            <input type="text" id="msgSenderName" class="input-field" placeholder="Tên hoặc bút danh của bạn..." required />
+            <input type="email" id="msgSenderEmail" class="input-field" placeholder="Email của bạn (không bắt buộc)" />
+          </div>
+          <textarea id="msgContent" class="input-field" placeholder="Viết lời nhắn của bạn tại đây..." required></textarea>
+          <div style="margin-top: 12px; display: flex; justify-content: flex-end;">
+            <button type="submit" class="btn-pill primary">Gửi lời nhắn</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         TAB 3 (PHẢI): TAB HỒ SƠ CÁ NHÂN (Admin + User Google/Zalo/Facebook + Firebase)
+         ====================================================================== -->
+    <section id="tab-profile" class="tab-view">
+      <!-- Khu vực đăng nhập (Hiển thị khi chưa đăng nhập) -->
+      <div id="authContainer" class="profile-card">
+        <h2 style="font-family: var(--font-display); font-size: 1.7rem; margin-bottom: 6px;">Không gian cá nhân</h2>
+        <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 20px;">
+          Đăng nhập để lưu trạng thái yêu thích, tùy chỉnh hồ sơ và đồng bộ dữ liệu xuyên suốt các lần truy cập.
+        </p>
+
+        <div class="auth-grid">
+          <!-- Cột 1: Độc giả đăng nhập bằng Google, Zalo, Facebook -->
+          <div class="auth-box">
+            <h3>Dành cho Độc giả</h3>
+            <p style="font-size: 0.83rem; color: var(--text-secondary);">
+              Kết nối nhanh và lưu thông tin cho những lần ghé thăm sau.
+            </p>
+            <div class="social-login-stack">
+              <button class="social-btn" onclick="loginWithProvider('Google')">
+                <!-- Icon Google -->
+                <svg width="18" height="18" viewBox="0 0 24 24">
+                  <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.8C6.2 7.2 8.9 5 12 5z"/>
+                  <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.5H12v4.8h6.5c-.3 1.5-1.1 2.8-2.4 3.6l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/>
+                  <path fill="#FBBC05" d="M5.3 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.6 7.4C.6 9.4 0 11.6 0 14s.6 4.6 1.6 6.6l3.7-2.8z"/>
+                  <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.1 0-5.8-2.1-6.7-5l-3.7 2.8C3.5 20.4 7.4 23 12 23z"/>
+                </svg>
+                <span>Tiếp tục với Google</span>
+              </button>
+
+              <button class="social-btn" onclick="loginWithProvider('Zalo')">
+                <!-- Icon Zalo -->
+                <svg width="18" height="18" viewBox="0 0 24 24">
+                  <rect width="24" height="24" rx="6" fill="#0068FF"/>
+                  <text x="12" y="15.5" text-anchor="middle" fill="#FFFFFF" font-size="8.5" font-weight="bold" font-family="sans-serif">Zalo</text>
+                </svg>
+                <span>Tiếp tục với Zalo</span>
+              </button>
+
+              <button class="social-btn" onclick="loginWithProvider('Facebook')">
+                <!-- Icon Facebook -->
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="#1877F2">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+                <span>Tiếp tục với Facebook</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Cột 2: Quản trị viên (Admin) -->
+          <div class="auth-box">
+            <h3>Quản trị viên (Thi gia)</h3>
+            <p style="font-size: 0.83rem; color: var(--text-secondary); margin-bottom: 12px;">
+              Đăng nhập để quản lý tập thơ, đăng bài, chèn nhạc Spotify và đồng bộ Firebase.
+            </p>
+            <form onsubmit="handleAdminLogin(event)" style="display: flex; flex-direction: column; gap: 10px;">
+              <input type="email" id="adminEmailInput" class="input-field" placeholder="Email quản trị" required />
+              <input type="password" id="adminPwdInput" class="input-field" placeholder="Mật khẩu" required />
+              <button type="submit" class="btn-pill primary" style="justify-content: center;">Đăng nhập Admin</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Khu vực Hồ sơ đã đăng nhập (Lưu tự động cho lần sau) -->
+      <div id="loggedInContainer" class="hidden">
+        <div class="profile-card">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <img id="userProfileAvatar" src="" alt="Avatar" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent);" />
+              <div>
+                <h2 id="userProfileName" style="font-family: var(--font-display); font-size: 1.5rem;"></h2>
+                <span id="userProfileBadge" class="poem-badge"></span>
+              </div>
+            </div>
+            <button class="btn-pill" onclick="logoutUser()">Đăng xuất</button>
+          </div>
+
+          <!-- Tùy chỉnh thông tin hồ sơ -->
+          <h4 style="margin-bottom: 10px; font-size: 0.92rem;">Tùy chỉnh hồ sơ cá nhân</h4>
+          <div class="form-row">
+            <input type="text" id="editProfileName" class="input-field" placeholder="Tên hiển thị" />
+            <input type="text" id="editProfileAvatar" class="input-field" placeholder="Link ảnh đại diện (URL hoặc tải ảnh bên dưới)" />
+          </div>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-top: 8px;">
+            <label class="btn-pill" style="font-size: 0.82rem;">
+              📷 Tải ảnh đại diện từ máy
+              <input type="file" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)" />
+            </label>
+            <button class="btn-pill primary" onclick="saveProfileChanges()">Lưu thay đổi hồ sơ</button>
+          </div>
+        </div>
+
+        <!-- BẢNG ĐIỀU KHIỂN ADMIN (Chỉ hiện khi đăng nhập bằng tài khoản Admin) -->
+        <div id="adminStudio" class="admin-panel hidden">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 16px;">
+            <div>
+              <h2 style="font-family: var(--font-display); font-size: 1.6rem;">Studio Thi Gia & Đồng Bộ Firebase</h2>
+              <p style="font-size: 0.83rem; color: var(--text-secondary);" id="firebaseStatusText">
+                Trạng thái: Sẵn sàng đồng bộ dữ liệu lên người dùng.
+              </p>
+            </div>
+            <button class="btn-pill primary" onclick="openPoemEditor()">+ Đăng bài thơ mới</button>
+          </div>
+
+          <!-- Tùy chỉnh thông tin Thi gia trên Home Tab -->
+          <details style="margin-bottom: 18px; background: var(--bg-secondary); padding: 14px; border-radius: 12px;">
+            <summary style="cursor: pointer; font-weight: 600; font-size: 0.9rem;">Chỉnh sửa thông tin Home Tab & Thẻ giới thiệu</summary>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
+              <input type="text" id="adminEditBioUrl" class="input-field" placeholder="Link w.bio chính thức" />
+              <textarea id="adminEditIntro" class="input-field" rows="4" placeholder="Đoạn giới thiệu bút danh Thiên Minh"></textarea>
+              <button class="btn-pill primary" style="align-self: flex-end;" onclick="saveAuthorHomeInfo()">Cập nhật Home Tab</button>
+            </div>
+          </details>
+
+          <!-- Quản lý Tập thơ -->
+          <details style="margin-bottom: 18px; background: var(--bg-secondary); padding: 14px; border-radius: 12px;">
+            <summary style="cursor: pointer; font-weight: 600; font-size: 0.9rem;">Quản lý Tập thơ (Thêm / Xóa tab trượt)</summary>
+            <div id="adminCollectionList" style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px;"></div>
+            <div style="display: flex; gap: 8px; margin-top: 10px;">
+              <input type="text" id="newCollectionName" class="input-field" placeholder="Tên tập thơ mới (VD: Tập: Mưa Tháng Bảy)" />
+              <button class="btn-pill primary" onclick="addCollectionFromAdmin()">Thêm</button>
+            </div>
+          </details>
+
+          <!-- Danh sách bài thơ để chỉnh sửa / xóa / tùy chỉnh tương tác -->
+          <h4 style="margin-bottom: 10px; font-size: 0.92rem;">Danh sách tác phẩm hiện có</h4>
+          <div id="adminPoemList"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================================================================
+       MODAL ĐỌC BÀI THƠ CHI TIẾT (ZEN MODE, CỠ CHỮ, BÀI TRƯỚC/SAU, QUOTE CARD)
+       ======================================================================== -->
+  <div class="modal-overlay" id="readerModalOverlay" onclick="closeReaderOnOutside(event)">
+    <div class="reader-modal" id="readerModalBox">
+      <div class="reader-toolbar">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <button class="btn-pill" onclick="toggleZenMode()" id="zenModeBtn">🧘 Zen Mode</button>
+          <button class="btn-pill" onclick="changePoemFontSize(-0.08)" title="Giảm cỡ chữ">A-</button>
+          <button class="btn-pill" onclick="changePoemFontSize(0.08)" title="Tăng cỡ chữ">A+</button>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <button class="btn-pill" onclick="navigatePoem(-1)">← Trước</button>
+          <button class="btn-pill" onclick="navigatePoem(1)">Sau →</button>
+          <button class="btn-pill primary" onclick="closeReaderModal()">Đóng</button>
+        </div>
+      </div>
+
+      <div class="reader-poem-container" id="readerBody"></div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL TẠO / CHỈNH SỬA BÀI THƠ DÀNH CHO ADMIN
+       ======================================================================== -->
+  <div class="modal-overlay" id="editorModalOverlay">
+    <div class="reader-modal">
+      <div class="reader-toolbar">
+        <h3 id="editorModalTitle" style="font-family: var(--font-display); font-size: 1.5rem;">Soạn tác phẩm mới</h3>
+        <button class="btn-pill" onclick="closePoemEditor()">Đóng</button>
+      </div>
+
+      <form onsubmit="savePoemFromEditor(event)" style="display: flex; flex-direction: column; gap: 12px;">
+        <input type="hidden" id="editPoemId" />
+        <input type="text" id="editPoemTitle" class="input-field" placeholder="Nhan đề bài thơ *" required />
+
+        <div class="form-row">
+          <select id="editPoemCollection" class="input-field"></select>
+          <input type="text" id="editPoemGenre" class="input-field" placeholder="Thể loại (VD: Thơ tự do, Lục bát)" />
+        </div>
+
+        <div class="form-row">
+          <input type="text" id="editPoemTime" class="input-field" placeholder="Thời gian đăng tải (Để trống sẽ lấy giờ hiện tại)" />
+          <input type="text" id="editPoemContext" class="input-field" placeholder="Hoàn cảnh sáng tác" />
+        </div>
+
+        <!-- Ảnh minh họa: Dán URL hoặc tải ảnh trực tiếp -->
+        <div class="form-row">
+          <input type="text" id="editPoemCover" class="input-field" placeholder="Link ảnh bìa bài thơ (URL)" />
+          <label class="btn-pill" style="justify-content: center;">
+            🖼️ Tải ảnh từ thiết bị
+            <input type="file" accept="image/*" class="hidden" onchange="handlePoemImageUpload(event)" />
+          </label>
+        </div>
+
+        <!-- Nhạc nền Spotify -->
+        <input type="url" id="editPoemSpotify" class="input-field" placeholder="Link nhạc nền Spotify (VD: https://open.spotify.com/track/...)" />
+
+        <textarea id="editPoemHighlight" class="input-field" rows="2" placeholder="Cặp câu thơ mở màn tạo điểm nhấn (hiện ở Trang chủ)"></textarea>
+        <textarea id="editPoemContent" class="input-field" rows="8" placeholder="Nội dung bài thơ (giữ đúng nhịp ngắt dòng) *" required></textarea>
+        <textarea id="editPoemNote" class="input-field" rows="3" placeholder="Lời bình / Góc hậu trường bài thơ"></textarea>
+
+        <!-- Tùy chỉnh tương tác của tác giả -->
+        <div class="form-row" style="align-items: center;">
+          <div style="display: flex; gap: 8px;">
+            <input type="number" id="editPoemLikes" class="input-field" placeholder="Lượt thích" min="0" />
+            <input type="number" id="editPoemFavs" class="input-field" placeholder="Yêu thích" min="0" />
+          </div>
+          <div style="display: flex; gap: 14px; font-size: 0.86rem;">
+            <label><input type="checkbox" id="editPoemFeatured" checked /> Nổi bật</label>
+            <label><input type="checkbox" id="editPoemAllowComments" checked /> Mở bình luận</label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-pill primary" style="justify-content: center; margin-top: 6px;">
+          Lưu & Đồng bộ tác phẩm
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL TẠO THẺ TRÍCH DẪN (QUOTE CARD)
+       ======================================================================== -->
+  <div class="modal-overlay" id="quoteModalOverlay" onclick="if(event.target===this) closeQuoteModal()">
+    <div class="reader-modal" style="max-width: 520px;">
+      <div class="reader-toolbar">
+        <h3 style="font-family: var(--font-display); font-size: 1.4rem;">Thẻ trích dẫn thơ</h3>
+        <button class="btn-pill" onclick="closeQuoteModal()">Đóng</button>
+      </div>
+      <div class="quote-card-preview" id="quoteCardVisual">
+        <div class="quote-card-text" id="quoteCardText"></div>
+        <div style="font-size: 0.85rem; color: var(--accent); font-weight: 600;" id="quoteCardTitle"></div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Thiên Minh · w.poetry</div>
+      </div>
+      <div style="display: flex; justify-content: center; gap: 10px;">
+        <button class="btn-pill primary" onclick="copyCurrentQuote()">📋 Sao chép đoạn thơ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       THANH ĐIỀU HƯỚNG 3 TAB DƯỚI CÙNG: THƠ (TRÁI) - HOME (GIỮA) - HỒ SƠ (PHẢI)
+       ======================================================================== -->
+  <nav class="bottom-nav" aria-label="Điều hướng chính">
+    <!-- Tab Thơ (Phía trái) - Icon tượng trưng cho thơ văn (Lông vũ / Trang viết) -->
+    <button class="nav-item" id="nav-poetry" onclick="switchTab('poetry')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path>
+        <line x1="16" y1="8" x2="2" y2="22"></line>
+        <line x1="17.5" y1="15" x2="9" y2="15"></line>
+      </svg>
+      <span>Thơ</span>
+    </button>
+
+    <!-- Home Tab (Ở giữa) - Icon Home -->
+    <button class="nav-item center-home active" id="nav-home" onclick="switchTab('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      </svg>
+      <span>Trang chủ</span>
+    </button>
+
+    <!-- Tab Hồ sơ cá nhân (Phía phải) - Icon User Profile -->
+    <button class="nav-item" id="nav-profile" onclick="switchTab('profile')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+      <span>Hồ sơ</span>
+    </button>
+  </nav>
+
+  <!-- Firebase SDK (Compat để chạy mượt trên mọi trình duyệt & GitHub Pages) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+  <script>
+    // ========================================================================
+    // KHỞI TẠO TRẠNG THÁI & ĐỒNG BỘ DỮ LIỆU (FIREBASE + LOCALSTORAGE)
+    // ========================================================================
+    const STORAGE_KEYS = {
+      APP_DATA: "w_poetry_synced_data_v1",
+      CURRENT_USER: "w_poetry_logged_user_v1",
+      USER_REACTIONS: "w_poetry_user_reactions_v1",
+      THEME_MANUAL: "w_poetry_theme_manual_v1"
+    };
+
+    let appState = JSON.parse(JSON.stringify(window.POETRY_DATA));
+    let currentCollection = "all";
+    let currentReaderPoemId = null;
+    let currentQuoteToCopy = "";
+    let firebaseDb = null;
+    let isFirebaseConnected = false;
+
+    // 1. Khởi tạo Firebase Realtime Database nếu đã điền config thật
+    function initFirebaseSync() {
+      const cfg = appState.firebaseConfig;
+      if (cfg && cfg.apiKey && !cfg.apiKey.includes("YOUR_FIREBASE")) {
+        try {
+          if (!firebase.apps.length) {
+            firebase.initializeApp(cfg);
+          }
+          firebaseDb = firebase.database();
+          const rootRef = firebaseDb.ref("w_poetry_store");
+
+          // Lắng nghe thay đổi từ Admin theo thời gian thực và cập nhật cho mọi User
+          rootRef.on("value", (snapshot) => {
+            const remoteData = snapshot.val();
+            if (remoteData) {
+              if (remoteData.author) appState.author = remoteData.author;
+              if (remoteData.collections) appState.collections = remoteData.collections;
+              if (remoteData.poems) appState.poems = remoteData.poems;
+              localStorage.setItem(STORAGE_KEYS.APP_DATA, JSON.stringify(appState));
+              refreshAllUI();
+            } else {
+              // Đẩy dữ liệu khởi tạo lên Firebase lần đầu
+              pushDataToFirebase();
+            }
+            isFirebaseConnected = true;
+            updateSyncIndicator(true);
+          });
+        } catch (err) {
+          console.warn("Firebase fallback sang LocalStorage:", err);
+          updateSyncIndicator(false);
+        }
+      } else {
+        // Chế độ lưu cục bộ khi chưa gắn key Firebase
+        const cached = localStorage.getItem(STORAGE_KEYS.APP_DATA);
+        if (cached) {
+          try {
+            const parsed = JSON.parse(cached);
+            appState.author = parsed.author || appState.author;
+            appState.collections = parsed.collections || appState.collections;
+            appState.poems = parsed.poems || appState.poems;
+          } catch (e) {}
+        }
+        updateSyncIndicator(false);
+      }
+    }
+
+    function pushDataToFirebase() {
+      localStorage.setItem(STORAGE_KEYS.APP_DATA, JSON.stringify(appState));
+      if (firebaseDb) {
+        firebaseDb.ref("w_poetry_store").set({
+          author: appState.author,
+          collections: appState.collections,
+          poems: appState.poems,
+          updatedAt: Date.now()
+        });
+      }
+    }
+
+    function updateSyncIndicator(connected) {
+      const dot = document.getElementById("syncStatusDot");
+      const statusTxt = document.getElementById("firebaseStatusText");
+      if (dot) {
+        dot.style.background = connected ? "#4caf50" : "#e0a800";
+        dot.title = connected
+          ? "Đã kết nối Firebase Realtime Sync"
+          : "Đang chạy bộ nhớ cục bộ (Điền firebaseConfig trong data.js để đồng bộ đa thiết bị)";
+      }
+      if (statusTxt) {
+        statusTxt.textContent = connected
+          ? "Trạng thái: Đã kết nối Firebase Console — Mọi thay đổi được đồng bộ trực tiếp lên User."
+          : "Trạng thái: Đang lưu trên trình duyệt (Hãy điền firebaseConfig trong data.js để đồng bộ qua Firebase Console).";
+      }
+    }
+
+    // ========================================================================
+    // 2. ĐỒNG HỒ THIẾT BỊ & TỰ ĐỘNG CHUYỂN CHẾ ĐỘ SÁNG / TỐI THEO GIỜ
+    // ========================================================================
+    function updateDeviceClockAndTheme() {
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2, "0");
+      const mm = String(now.getMinutes()).padStart(2, "0");
+      const clockEl = document.getElementById("deviceClock");
+      if (clockEl) clockEl.textContent = `${hh}:${mm}`;
+
+      const manualTheme = localStorage.getItem(STORAGE_KEYS.THEME_MANUAL);
+      if (!manualTheme) {
+        const hour = now.getHours();
+        const isDay = hour >= 6 && hour < 18;
+        applyTheme(isDay ? "light" : "dark", false);
+      }
+    }
+
+    function applyTheme(theme, isManual = true) {
+      document.documentElement.setAttribute("data-theme", theme);
+      const icon = document.getElementById("themeIcon");
+      const label = document.getElementById("themeLabel");
+      if (icon && label) {
+        icon.textContent = theme === "light" ? "☀️" : "🌙";
+        label.textContent = theme === "light" ? "Ban ngày" : "Ban đêm";
+      }
+      if (isManual) {
+        localStorage.setItem(STORAGE_KEYS.THEME_MANUAL, theme);
+      }
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute("data-theme");
+      const next = current === "light" ? "dark" : "light";
+      applyTheme(next, true);
+      showToast(next === "light" ? "Đã chuyển sang nền kem ấm ban ngày" : "Đã chuyển sang nền đêm tĩnh lặng");
+    }
+
+    // ========================================================================
+    // 3. ĐIỀU HƯỚNG 3 TAB & THANH TIẾN ĐỘ ĐỌC
+    // ========================================================================
+    function switchTab(tabName) {
+      document.querySelectorAll(".tab-view").forEach((el) => el.classList.remove("active"));
+      document.querySelectorAll(".nav-item").forEach((el) => el.classList.remove("active"));
+
+      const targetTab = document.getElementById(`tab-${tabName}`);
+      const targetNav = document.getElementById(`nav-${tabName}`);
+      if (targetTab) targetTab.classList.add("active");
+      if (targetNav) targetNav.classList.add("active");
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    window.addEventListener("scroll", () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      document.getElementById("readingProgress").style.width = `${pct}%`;
+    });
+
+    // ========================================================================
+    // 4. HIỂN THỊ HOME TAB (NHẬT HUY / THIÊN MINH / THẺ GIỚI THIỆU ẤN MỞ)
+    // ========================================================================
+    function renderHomeTab() {
+      const author = appState.author;
+      document.getElementById("heroAvatar").src = author.avatar;
+      document.getElementById("heroName").textContent = author.name;
+      document.getElementById("heroPenName").textContent = `Bút danh: ${author.penName}`;
+      document.getElementById("heroBioLabel").textContent = author.bioLabel || "Nhật Huy | w.bio";
+      document.getElementById("heroBioLink").href = author.bioUrl || "https://nhztwiie.github.io/w";
+      document.getElementById("heroIntroText").textContent = author.introParagraph;
+      document.getElementById("heroPhilosophy").textContent = author.philosophy || "";
+
+      const milestoneUl = document.getElementById("heroMilestones");
+      milestoneUl.innerHTML = (author.milestones || [])
+        .map((m) => `<li><strong>${m.year}:</strong> ${m.text}</li>`)
+        .join("");
+
+      const socialWrap = document.getElementById("heroSocialLinks");
+      socialWrap.innerHTML = (author.socials || [])
+        .map(
+          (s) =>
+            `<a href="${s.url}" target="_blank" rel="noopener noreferrer" class="poem-badge" style="text-decoration:none;">${s.label} ↗</a>`
+        )
+        .join("");
+
+      // Render 3-5 bài thơ tiêu biểu ở Trang chủ
+      const featuredPoems = appState.poems.filter((p) => p.featured).slice(0, 5);
+      const grid = document.getElementById("featuredGrid");
+      grid.innerHTML = featuredPoems
+        .map((poem) => {
+          const verse =
+            poem.highlightVerse ||
+            poem.content
+              .split("\n")
+              .filter((l) => l.trim())
+              .slice(0, 2)
+              .join("\n");
+          return `
+            <article class="featured-card" onclick="openReaderModal('${poem.id}')">
+              <div class="featured-verse">${escapeHtml(verse)}</div>
+              <div class="featured-footer">
+                <strong style="color: var(--text-primary);">${escapeHtml(poem.title)}</strong>
+                <span>Đọc thơ →</span>
+              </div>
+            </article>
+          `;
+        })
+        .join("");
+    }
+
+    function toggleIntroCard() {
+      const drawer = document.getElementById("introDrawer");
+      const label = document.getElementById("toggleIntroText");
+      const isOpen = drawer.classList.toggle("open");
+      label.textContent = isOpen ? "Thu gọn giới thiệu" : "Lời ngỏ thi gia";
+    }
+
+    // ========================================================================
+    // 5. HIỂN THỊ TAB THƠ & CHUYỂN ĐỔI LINK SPOTIFY SANG EMBED PLAYER
+    // ========================================================================
+    function getSpotifyEmbedUrl(url) {
+      if (!url) return "";
+      try {
+        const match = url.match(/open\.spotify\.com\/(intl-[a-z]+\/)?(track|album|playlist|episode)\/([a-zA-Z0-9]+)/);
+        if (match) {
+          return `https://open.spotify.com/embed/${match[2]}/${match[3]}?utm_source=generator&theme=0`;
+        }
+      } catch (e) {}
+      return "";
+    }
+
+    function renderCollectionTabs() {
+      const container = document.getElementById("collectionTabs");
+      container.innerHTML = appState.collections
+        .map(
+          (col) => `
+          <button class="col-chip ${currentCollection === col.id ? "active" : ""}" onclick="selectCollection('${col.id}')">
+            ${escapeHtml(col.name)}
+          </button>
+        `
+        )
+        .join("");
+    }
+
+    function selectCollection(colId) {
+      currentCollection = colId;
+      renderCollectionTabs();
+      renderPoetryFeed();
+    }
+
+    function renderPoetryFeed() {
+      const query = (document.getElementById("poemSearchInput").value || "").toLowerCase().trim();
+      const reactions = getUserReactions();
+
+      const filtered = appState.poems.filter((poem) => {
+        const matchCol = currentCollection === "all" || poem.collectionId === currentCollection;
+        const matchQuery =
+          !query ||
+          poem.title.toLowerCase().includes(query) ||
+          poem.content.toLowerCase().includes(query) ||
+          (poem.genre && poem.genre.toLowerCase().includes(query));
+        return matchCol && matchQuery;
+      });
+
+      const feed = document.getElementById("poemFeed");
+      if (!filtered.length) {
+        feed.innerHTML = `<div class="profile-card" style="text-align:center; color:var(--text-secondary);">Chưa tìm thấy bài thơ phù hợp với từ khóa hoặc tập thơ này.</div>`;
+        return;
+      }
+
+      feed.innerHTML = filtered
+        .map((poem) => {
+          const colObj = appState.collections.find((c) => c.id === poem.collectionId);
+          const colName = colObj ? colObj.name : "Thơ chọn lọc";
+          const embedUrl = getSpotifyEmbedUrl(poem.spotifyUrl);
+          const userReact = reactions[poem.id] || {};
+          const excerptLines = poem.content.split("\n").slice(0, 6).join("\n");
+          const hasMore = poem.content.split("\n").length > 6;
+
+          return `
+            <article class="poem-card">
+              ${
+                poem.coverImage
+                  ? `<img class="poem-card-cover" src="${poem.coverImage}" alt="${escapeHtml(poem.title)}" onclick="openReaderModal('${poem.id}')" loading="lazy" />`
+                  : ""
+              }
+              <div class="poem-card-body">
+                <div class="poem-card-header">
+                  <div class="author-mini">
+                    <img src="${appState.author.avatar}" alt="${appState.author.name}" />
+                    <div class="author-mini-info">
+                      <span class="author-mini-name">${escapeHtml(appState.author.name)} <em style="font-weight:400; color:var(--accent);">(${escapeHtml(appState.author.penName)})</em></span>
+                      <span class="poem-time">${escapeHtml(poem.createdAt)}</span>
+                    </div>
+                  </div>
+                  <span class="poem-badge">${escapeHtml(colName)}</span>
+                </div>
+
+                <h3 class="poem-card-title" onclick="openReaderModal('${poem.id}')">${escapeHtml(poem.title)}</h3>
+                <div class="poem-excerpt" onclick="openReaderModal('${poem.id}')">${escapeHtml(excerptLines)}${hasMore ? "\n..." : ""}</div>
+
+                ${
+                  embedUrl
+                    ? `<div class="spotify-embed-box">
+                        <iframe src="${embedUrl}" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                      </div>`
+                    : ""
+                }
+
+                <div class="poem-actions">
+                  <div class="reaction-group">
+                    <button class="react-btn ${userReact.liked ? "active" : ""}" onclick="toggleReaction('${poem.id}', 'liked')">
+                      👍 Thích <span>${poem.likes || 0}</span>
+                    </button>
+                    <button class="react-btn ${userReact.favorited ? "active" : ""}" onclick="toggleReaction('${poem.id}', 'favorited')">
+                      ❤️ Yêu thích <span>${poem.favorites || 0}</span>
+                    </button>
+                    <button class="react-btn" onclick="openReaderModal('${poem.id}', true)">
+                      💬 Bình luận <span>${(poem.comments || []).length}</span>
+                    </button>
+                  </div>
+
+                  <div class="reaction-group">
+                    <button class="react-btn" onclick="openQuoteModal('${poem.id}')" title="Tạo thẻ trích dẫn">
+                      ✨ Trích dẫn
+                    </button>
+                    <button class="react-btn" onclick="openReaderModal('${poem.id}')">
+                      Đọc trọn vẹn →
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          `;
+        })
+        .join("");
+    }
+
+    function getUserReactions() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEYS.USER_REACTIONS) || "{}");
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function toggleReaction(poemId, type) {
+      const poem = appState.poems.find((p) => p.id === poemId);
+      if (!poem) return;
+
+      const reactions = getUserReactions();
+      if (!reactions[poemId]) reactions[poemId] = {};
+
+      if (type === "liked") {
+        reactions[poemId].liked = !reactions[poemId].liked;
+        poem.likes = Math.max(0, (poem.likes || 0) + (reactions[poemId].liked ? 1 : -1));
+      } else if (type === "favorited") {
+        reactions[poemId].favorited = !reactions[poemId].favorited;
+        poem.favorites = Math.max(0, (poem.favorites || 0) + (reactions[poemId].favorited ? 1 : -1));
+      }
+
+      localStorage.setItem(STORAGE_KEYS.USER_REACTIONS, JSON.stringify(reactions));
+      pushDataToFirebase();
+      renderPoetryFeed();
+      if (currentReaderPoemId === poemId) renderReaderContent(poem);
+    }
+
+    // ========================================================================
+    // 6. MODAL ĐỌC THƠ CHI TIẾT, ZEN MODE, BÌNH LUẬN & THẺ TRÍCH DẪN
+    // ========================================================================
+    function openReaderModal(poemId, focusComment = false) {
+      const poem = appState.poems.find((p) => p.id === poemId);
+      if (!poem) return;
+      currentReaderPoemId = poemId;
+      renderReaderContent(poem);
+      document.getElementById("readerModalOverlay").classList.add("open");
+
+      if (focusComment) {
+        setTimeout(() => {
+          const input = document.getElementById("readerCommentInput");
+          if (input) input.focus();
+        }, 200);
+      }
+    }
+
+    function renderReaderContent(poem) {
+      const embedUrl = getSpotifyEmbedUrl(poem.spotifyUrl);
+      const reactions = getUserReactions()[poem.id] || {};
+      const commentsHtml = (poem.comments || [])
+        .map(
+          (c) => `
+          <div class="comment-item">
+            <div class="comment-item-head">
+              <span>${escapeHtml(c.authorName)}</span>
+              <span style="color: var(--text-muted); font-weight: 400;">${escapeHtml(c.createdAt)}</span>
+            </div>
+            <div>${escapeHtml(c.text)}</div>
+          </div>
+        `
+        )
+        .join("");
+
+      document.getElementById("readerBody").innerHTML = `
+        <h2 class="reader-title">${escapeHtml(poem.title)}</h2>
+        <div class="reader-meta">
+          ${escapeHtml(poem.createdAt)} · ${escapeHtml(poem.genre || "Thơ")}
+          ${poem.context ? `<br/><em>Hoàn cảnh: ${escapeHtml(poem.context)}</em>` : ""}
+        </div>
+
+        ${poem.coverImage ? `<img class="reader-cover" src="${poem.coverImage}" alt="${escapeHtml(poem.title)}" />` : ""}
+
+        ${
+          embedUrl
+            ? `<div class="spotify-embed-box" style="margin-bottom: 22px;">
+                <iframe src="${embedUrl}" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+              </div>`
+            : ""
+        }
+
+        <div class="reader-content">${escapeHtml(poem.content)}</div>
+
+        ${
+          poem.authorNote
+            ? `<details class="author-note-box">
+                <summary style="cursor:pointer; font-weight:600; color:var(--accent);">Góc hậu trường & Lời bình của Thiên Minh</summary>
+                <p style="margin-top:8px; line-height:1.7;">${escapeHtml(poem.authorNote)}</p>
+              </details>`
+            : ""
+        }
+
+        <div class="poem-actions">
+          <div class="reaction-group">
+            <button class="react-btn ${reactions.liked ? "active" : ""}" onclick="toggleReaction('${poem.id}', 'liked')">
+              👍 Thích (${poem.likes || 0})
+            </button>
+            <button class="react-btn ${reactions.favorited ? "active" : ""}" onclick="toggleReaction('${poem.id}', 'favorited')">
+              ❤️ Yêu thích (${poem.favorites || 0})
+            </button>
+          </div>
+          <button class="btn-pill" onclick="openQuoteModal('${poem.id}')">✨ Tạo thẻ trích dẫn</button>
+        </div>
+
+        <div class="comment-section">
+          <h4 style="margin-bottom: 12px;">Cảm nhận của bạn đọc (${(poem.comments || []).length})</h4>
+          ${
+            poem.allowComments !== false
+              ? `<form onsubmit="submitPoemComment(event, '${poem.id}')" style="display:flex; gap:8px; margin-bottom:16px;">
+                  <input type="text" id="readerCommentInput" class="input-field" placeholder="Viết đôi dòng cảm nhận về bài thơ..." required />
+                  <button type="submit" class="btn-pill primary">Gửi</button>
+                </form>`
+              : `<p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Tác giả đã tạm đóng bình luận cho tác phẩm này.</p>`
+          }
+          <div>${commentsHtml || '<p style="font-size:0.85rem; color:var(--text-muted);">Chưa có bình luận nào. Hãy là người đầu tiên chia sẻ cảm xúc.</p>'}</div>
+        </div>
+      `;
+    }
+
+    function submitPoemComment(e, poemId) {
+      e.preventDefault();
+      const input = document.getElementById("readerCommentInput");
+      const text = input.value.trim();
+      if (!text) return;
+
+      const poem = appState.poems.find((p) => p.id === poemId);
+      if (!poem) return;
+
+      const currentUser = getLoggedUser();
+      const commenterName = currentUser ? currentUser.name : "Độc giả ẩn danh";
+      const now = new Date();
+      const dateStr = `${String(now.getDate()).padStart(2, "0")}/${String(now.getMonth() + 1).padStart(2, "0")}/${now.getFullYear()}`;
+
+      if (!poem.comments) poem.comments = [];
+      poem.comments.unshift({
+        id: "c-" + Date.now(),
+        authorName: commenterName,
+        text,
+        createdAt: dateStr
+      });
+
+      pushDataToFirebase();
+      renderReaderContent(poem);
+      renderPoetryFeed();
+      showToast("Đã gửi bình luận của bạn");
+    }
+
+    function closeReaderModal() {
+      document.getElementById("readerModalOverlay").classList.remove("open");
+      document.getElementById("readerModalBox").classList.remove("zen-active");
+      currentReaderPoemId = null;
+    }
+
+    function closeReaderOnOutside(e) {
+      if (e.target.id === "readerModalOverlay") closeReaderModal();
+    }
+
+    function toggleZenMode() {
+      const box = document.getElementById("readerModalBox");
+      const btn = document.getElementById("zenModeBtn");
+      const isZen = box.classList.toggle("zen-active");
+      btn.textContent = isZen ? "✕ Thoát Zen Mode" : "🧘 Zen Mode";
+    }
+
+    function changePoemFontSize(delta) {
+      const root = document.documentElement;
+      const current = parseFloat(getComputedStyle(root).getPropertyValue("--poem-font-size")) || 1.125;
+      const next = Math.min(1.65, Math.max(0.95, current + delta));
+      root.style.setProperty("--poem-font-size", `${next}rem`);
+    }
+
+    function navigatePoem(step) {
+      if (!currentReaderPoemId) return;
+      const idx = appState.poems.findIndex((p) => p.id === currentReaderPoemId);
+      if (idx === -1) return;
+      const nextIdx = (idx + step + appState.poems.length) % appState.poems.length;
+      openReaderModal(appState.poems[nextIdx].id);
+    }
+
+    // Thẻ trích dẫn (Quote Card)
+    function openQuoteModal(poemId) {
+      const poem = appState.poems.find((p) => p.id === poemId);
+      if (!poem) return;
+      const verse =
+        poem.highlightVerse ||
+        poem.content
+          .split("\n")
+          .filter((l) => l.trim())
+          .slice(0, 4)
+          .join("\n");
+      currentQuoteToCopy = `"${verse}"\n— ${poem.title} (Thiên Minh | w.poetry)`;
+      document.getElementById("quoteCardText").textContent = verse;
+      document.getElementById("quoteCardTitle").textContent = `— ${poem.title} —`;
+      document.getElementById("quoteModalOverlay").classList.add("open");
+    }
+
+    function closeQuoteModal() {
+      document.getElementById("quoteModalOverlay").classList.remove("open");
+    }
+
+    function copyCurrentQuote() {
+      if (!currentQuoteToCopy) return;
+      navigator.clipboard.writeText(currentQuoteToCopy).then(() => {
+        showToast("Đã sao chép trích dẫn thơ vào bộ nhớ tạm");
+      });
+    }
+
+    // ========================================================================
+    // 7. ĐĂNG NHẬP ADMIN & ĐỘC GIẢ (GOOGLE / ZALO / FACEBOOK) + LƯU TRẠNG THÁI
+    // ========================================================================
+    function getLoggedUser() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEYS.CURRENT_USER) || "null");
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function setLoggedUser(userObj) {
+      if (userObj) {
+        localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(userObj));
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+      }
+      renderProfileTab();
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById("adminEmailInput").value.trim();
+      const pwd = document.getElementById("adminPwdInput").value.trim();
+      const adminCfg = appState.adminAccount;
+
+      if (email.toLowerCase() === adminCfg.email.toLowerCase() && pwd === adminCfg.password) {
+        setLoggedUser({
+          role: "admin",
+          provider: "Admin",
+          email: adminCfg.email,
+          name: appState.author.name,
+          avatar: appState.author.avatar
+        });
+        showToast("Chào mừng Nhật Huy (Thiên Minh) quay trở lại!");
+      } else {
+        showToast("Email hoặc mật khẩu quản trị chưa chính xác.");
+      }
+    }
+
+    function loginWithProvider(provider) {
+      // Tạo hồ sơ độc giả & lưu bền vững vào localStorage cho các lần truy cập sau
+      const defaultAvatars = {
+        Google: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
+        Zalo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
+        Facebook: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80"
+      };
+      setLoggedUser({
+        role: "user",
+        provider,
+        name: `Bạn đọc (${provider})`,
+        avatar: defaultAvatars[provider] || appState.author.avatar
+      });
+      showToast(`Đã đăng nhập qua ${provider} và lưu thông tin cho lần sau`);
+    }
+
+    function logoutUser() {
+      setLoggedUser(null);
+      showToast("Đã đăng xuất khỏi tài khoản");
+    }
+
+    function renderProfileTab() {
+      const user = getLoggedUser();
+      const authBox = document.getElementById("authContainer");
+      const loggedBox = document.getElementById("loggedInContainer");
+      const adminStudio = document.getElementById("adminStudio");
+      const manageColBtn = document.getElementById("manageCollectionsBtn");
+
+      if (!user) {
+        authBox.classList.remove("hidden");
+        loggedBox.classList.add("hidden");
+        adminStudio.classList.add("hidden");
+        if (manageColBtn) manageColBtn.classList.add("hidden");
+        return;
+      }
+
+      authBox.classList.add("hidden");
+      loggedBox.classList.remove("hidden");
+
+      document.getElementById("userProfileAvatar").src = user.avatar || appState.author.avatar;
+      document.getElementById("userProfileName").textContent = user.name;
+      document.getElementById("userProfileBadge").textContent =
+        user.role === "admin" ? "Quản trị viên · Thi gia Thiên Minh" : `Thành viên kết nối qua ${user.provider}`;
+
+      document.getElementById("editProfileName").value = user.name;
+      document.getElementById("editProfileAvatar").value = user.avatar || "";
+
+      if (user.role === "admin") {
+        adminStudio.classList.remove("hidden");
+        if (manageColBtn) manageColBtn.classList.remove("hidden");
+        renderAdminStudio();
+      } else {
+        adminStudio.classList.add("hidden");
+        if (manageColBtn) manageColBtn.classList.add("hidden");
+      }
+    }
+
+    function handleAvatarUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        document.getElementById("editProfileAvatar").value = reader.result;
+        showToast("Đã tải ảnh lên, hãy bấm 'Lưu thay đổi hồ sơ'");
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function saveProfileChanges() {
+      const user = getLoggedUser();
+      if (!user) return;
+      const newName = document.getElementById("editProfileName").value.trim();
+      const newAvatar = document.getElementById("editProfileAvatar").value.trim();
+
+      if (newName) user.name = newName;
+      if (newAvatar) user.avatar = newAvatar;
+
+      if (user.role === "admin") {
+        appState.author.name = user.name;
+        appState.author.avatar = user.avatar;
+        pushDataToFirebase();
+        renderHomeTab();
+        renderPoetryFeed();
+      }
+
+      setLoggedUser(user);
+      showToast("Đã lưu thay đổi hồ sơ cá nhân");
+    }
+
+    // ========================================================================
+    // 8. ADMIN STUDIO: QUẢN LÝ TẬP THƠ, ĐĂNG/SỬA/XÓA BÀI THƠ & ĐỒNG BỘ FIREBASE
+    // ========================================================================
+    function renderAdminStudio() {
+      document.getElementById("adminEditBioUrl").value = appState.author.bioUrl || "";
+      document.getElementById("adminEditIntro").value = appState.author.introParagraph || "";
+
+      // Danh sách tập thơ
+      const colList = document.getElementById("adminCollectionList");
+      colList.innerHTML = appState.collections
+        .map((c) => {
+          const canDelete = c.id !== "all";
+          return `
+            <span class="poem-badge" style="display:inline-flex; align-items:center; gap:6px;">
+              ${escapeHtml(c.name)}
+              ${canDelete ? `<button onclick="deleteCollection('${c.id}')" style="border:none; background:none; color:inherit; cursor:pointer; font-weight:bold;">×</button>` : ""}
+            </span>
+          `;
+        })
+        .join("");
+
+      // Danh sách bài thơ
+      const poemList = document.getElementById("adminPoemList");
+      poemList.innerHTML = appState.poems
+        .map(
+          (p) => `
+          <div class="admin-poem-row">
+            <div>
+              <strong>${escapeHtml(p.title)}</strong>
+              <div style="font-size:0.78rem; color:var(--text-muted);">
+                ${escapeHtml(p.createdAt)} · 👍 ${p.likes || 0} · ❤️ ${p.favorites || 0} · 💬 ${(p.comments || []).length}
+              </div>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button class="btn-pill" onclick="openPoemEditor('${p.id}')">Sửa</button>
+              <button class="btn-pill" style="color:#d9534f;" onclick="deletePoem('${p.id}')">Xóa</button>
+            </div>
+          </div>
+        `
+        )
+        .join("");
+    }
+
+    function saveAuthorHomeInfo() {
+      const bioUrl = document.getElementById("adminEditBioUrl").value.trim();
+      const intro = document.getElementById("adminEditIntro").value.trim();
+      if (bioUrl) appState.author.bioUrl = bioUrl;
+      if (intro) appState.author.introParagraph = intro;
+      pushDataToFirebase();
+      renderHomeTab();
+      showToast("Đã cập nhật & đồng bộ thông tin Home Tab");
+    }
+
+    function addCollectionFromAdmin() {
+      const input = document.getElementById("newCollectionName");
+      const name = input.value.trim();
+      if (!name) return;
+      const id = "col-" + Date.now();
+      appState.collections.push({ id, name });
+      input.value = "";
+      pushDataToFirebase();
+      refreshAllUI();
+      showToast("Đã thêm tập thơ mới");
+    }
+
+    function promptAddCollection() {
+      const name = prompt("Nhập tên tập thơ / chủ đề mới:");
+      if (!name || !name.trim()) return;
+      appState.collections.push({ id: "col-" + Date.now(), name: name.trim() });
+      pushDataToFirebase();
+      refreshAllUI();
+      showToast("Đã thêm tập thơ mới");
+    }
+
+    function deleteCollection(colId) {
+      if (!confirm("Xóa tập thơ này? Các bài thơ bên trong vẫn được giữ lại ở mục Tất cả.")) return;
+      appState.collections = appState.collections.filter((c) => c.id !== colId);
+      if (currentCollection === colId) currentCollection = "all";
+      pushDataToFirebase();
+      refreshAllUI();
+      showToast("Đã xóa tập thơ");
+    }
+
+    function openPoemEditor(poemId = null) {
+      const select = document.getElementById("editPoemCollection");
+      select.innerHTML = appState.collections
+        .filter((c) => c.id !== "all")
+        .map((c) => `<option value="${c.id}">${escapeHtml(c.name)}</option>`)
+        .join("");
+
+      if (poemId) {
+        const p = appState.poems.find((item) => item.id === poemId);
+        if (!p) return;
+        document.getElementById("editorModalTitle").textContent = "Chỉnh sửa tác phẩm";
+        document.getElementById("editPoemId").value = p.id;
+        document.getElementById("editPoemTitle").value = p.title;
+        document.getElementById("editPoemCollection").value = p.collectionId;
+        document.getElementById("editPoemGenre").value = p.genre || "";
+        document.getElementById("editPoemTime").value = p.createdAt || "";
+        document.getElementById("editPoemContext").value = p.context || "";
+        document.getElementById("editPoemCover").value = p.coverImage || "";
+        document.getElementById("editPoemSpotify").value = p.spotifyUrl || "";
+        document.getElementById("editPoemHighlight").value = p.highlightVerse || "";
+        document.getElementById("editPoemContent").value = p.content;
+        document.getElementById("editPoemNote").value = p.authorNote || "";
+        document.getElementById("editPoemLikes").value = p.likes || 0;
+        document.getElementById("editPoemFavs").value = p.favorites || 0;
+        document.getElementById("editPoemFeatured").checked = !!p.featured;
+        document.getElementById("editPoemAllowComments").checked = p.allowComments !== false;
+      } else {
+        document.getElementById("editorModalTitle").textContent = "Đăng bài thơ mới";
+        document.getElementById("editPoemId").value = "";
+        document.getElementById("editPoemTitle").value = "";
+        document.getElementById("editPoemGenre").value = "Thơ tự do";
+        document.getElementById("editPoemTime").value = "";
+        document.getElementById("editPoemContext").value = "";
+        document.getElementById("editPoemCover").value = "";
+        document.getElementById("editPoemSpotify").value = "";
+        document.getElementById("editPoemHighlight").value = "";
+        document.getElementById("editPoemContent").value = "";
+        document.getElementById("editPoemNote").value = "";
+        document.getElementById("editPoemLikes").value = 0;
+        document.getElementById("editPoemFavs").value = 0;
+        document.getElementById("editPoemFeatured").checked = true;
+        document.getElementById("editPoemAllowComments").checked = true;
+      }
+
+      document.getElementById("editorModalOverlay").classList.add("open");
+    }
+
+    function closePoemEditor() {
+      document.getElementById("editorModalOverlay").classList.remove("open");
+    }
+
+    function handlePoemImageUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        document.getElementById("editPoemCover").value = reader.result;
+        showToast("Đã chèn ảnh vào bài thơ");
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function savePoemFromEditor(e) {
+      e.preventDefault();
+      const id = document.getElementById("editPoemId").value;
+      const now = new Date();
+      const defaultTime = `${String(now.getDate()).padStart(2, "0")}/${String(now.getMonth() + 1).padStart(2, "0")}/${now.getFullYear()} · ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+
+      const payload = {
+        id: id || "poem-" + Date.now(),
+        title: document.getElementById("editPoemTitle").value.trim(),
+        collectionId: document.getElementById("editPoemCollection").value,
+        genre: document.getElementById("editPoemGenre").value.trim(),
+        createdAt: document.getElementById("editPoemTime").value.trim() || defaultTime,
+        context: document.getElementById("editPoemContext").value.trim(),
+        coverImage: document.getElementById("editPoemCover").value.trim(),
+        spotifyUrl: document.getElementById("editPoemSpotify").value.trim(),
+        highlightVerse: document.getElementById("editPoemHighlight").value.trim(),
+        content: document.getElementById("editPoemContent").value.trim(),
+        authorNote: document.getElementById("editPoemNote").value.trim(),
+        likes: parseInt(document.getElementById("editPoemLikes").value, 10) || 0,
+        favorites: parseInt(document.getElementById("editPoemFavs").value, 10) || 0,
+        featured: document.getElementById("editPoemFeatured").checked,
+        allowComments: document.getElementById("editPoemAllowComments").checked
+      };
+
+      if (id) {
+        const idx = appState.poems.findIndex((p) => p.id === id);
+        if (idx !== -1) {
+          payload.comments = appState.poems[idx].comments || [];
+          appState.poems[idx] = payload;
+        }
+      } else {
+        payload.comments = [];
+        appState.poems.unshift(payload);
+      }
+
+      pushDataToFirebase();
+      closePoemEditor();
+      refreshAllUI();
+      showToast("Đã lưu & đồng bộ bài thơ thành công!");
+    }
+
+    function deletePoem(poemId) {
+      if (!confirm("Bạn chắc chắn muốn xóa bài thơ này?")) return;
+      appState.poems = appState.poems.filter((p) => p.id !== poemId);
+      pushDataToFirebase();
+      refreshAllUI();
+      showToast("Đã xóa bài thơ");
+    }
+
+    // ========================================================================
+    // 9. GỬI LỜI NHẮN QUA EMAILJS (HOẶC LƯU THÔNG BÁO)
+    // ========================================================================
+    function handleGuestbookSubmit(e) {
+      e.preventDefault();
+      const senderName = document.getElementById("msgSenderName").value.trim();
+      const senderEmail = document.getElementById("msgSenderEmail").value.trim();
+      const message = document.getElementById("msgContent").value.trim();
+
+      const ejs = appState.emailjsConfig;
+      if (window.emailjs && ejs && ejs.publicKey && !ejs.publicKey.includes("YOUR_EMAILJS")) {
+        emailjs
+          .send(ejs.serviceId, ejs.templateId, {
+            from_name: senderName,
+            from_email: senderEmail,
+            message,
+            to_email: ejs.receiverEmail
+          })
+          .then(() => {
+            showToast("Đã gửi lời nhắn trực tiếp đến Thiên Minh!");
+            e.target.reset();
+          })
+          .catch(() => {
+            showToast("Đã ghi nhận lời nhắn của bạn!");
+            e.target.reset();
+          });
+      } else {
+        showToast(`Cảm ơn ${senderName}, lời nhắn đã được gửi đến Thiên Minh!`);
+        e.target.reset();
+      }
+    }
+
+    // ========================================================================
+    // TIỆN ÍCH CHUNG & KHỞI CHẠY ỨNG DỤNG
+    // ========================================================================
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => toast.classList.remove("show"), 3200);
+    }
+
+    function refreshAllUI() {
+      renderHomeTab();
+      renderCollectionTabs();
+      renderPoetryFeed();
+      renderProfileTab();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.emailjs && appState.emailjsConfig && !appState.emailjsConfig.publicKey.includes("YOUR_EMAILJS")) {
+        emailjs.init(appState.emailjsConfig.publicKey);
+      }
+      updateDeviceClockAndTheme();
+      setInterval(updateDeviceClockAndTheme, 15000);
+      initFirebaseSync();
+      refreshAllUI();
+    });
+  </script>
+</body>
+</html>
