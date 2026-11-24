@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>w.poetry — Nhật Huy (Thiên Minh)</title>
+  <title>Thiên Minh | w.poetry</title>
   <meta name="description" content="Không gian thơ cá nhân của Nhật Huy (Bút danh: Thiên Minh) — Trầm mặc, điềm tĩnh và sâu lắng." />
 
   <!-- Google Fonts: Serif văn học cho thơ & Sans-serif hiện đại cho giao diện -->
@@ -14,8 +14,11 @@
   <!-- EmailJS SDK (Tùy chọn gửi lời nhắn về Gmail) -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
+  <!-- QRCodeJS (Tạo mã QR tích hợp & tải về PNG) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
   <!-- Dữ liệu tách biệt -->
-  <script src="data.js"></script>
+  <script src="data-v3.js"></script>
 
   <style>
     /* ==========================================================================
@@ -1025,6 +1028,21 @@
       transform: translateY(0);
     }
 
+    @media (max-width: 560px) {
+      .hide-mobile { display: none; }
+      .brand-title { font-size: 1.25rem; }
+    }
+
+    .qr-box-wrapper {
+      display: inline-flex;
+      padding: 16px;
+      background: #ffffff;
+      border-radius: 18px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-card);
+      margin: 14px auto;
+    }
+
     .hidden {
       display: none !important;
     }
@@ -1041,18 +1059,33 @@
   <header class="top-bar">
     <div class="top-bar-inner">
       <div class="brand" onclick="switchTab('home')">
-        <span class="brand-title">w.poetry</span>
-        <span class="brand-sub">Thiên Minh</span>
+        <span class="brand-title" id="topBrandTitle">Thiên Minh | w.poetry</span>
       </div>
 
       <div class="top-controls">
+        <button class="theme-btn" onclick="copyWebLink()" title="Sao chép liên kết Thiên Minh | w.poetry">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span class="hide-mobile">Copy link</span>
+        </button>
+        <button class="theme-btn" onclick="openQrModal()" title="Hiển thị mã QR trang web">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+            <path d="M14 14h3v3h-3zM18 18h3v3h-3zM14 20h2M20 14v2"></path>
+          </svg>
+          <span class="hide-mobile">QR</span>
+        </button>
         <div class="clock-pill" title="Giờ đồng bộ thiết bị & trạng thái lưu trữ">
           <span class="sync-dot" id="syncStatusDot"></span>
           <span id="deviceClock">--:--</span>
         </div>
         <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Chuyển chế độ Sáng / Tối (Tự động theo giờ)">
           <span id="themeIcon">☀️</span>
-          <span id="themeLabel">Ban ngày</span>
+          <span id="themeLabel" class="hide-mobile">Ban ngày</span>
         </button>
       </div>
     </div>
@@ -1111,6 +1144,24 @@
             </svg>
             <span id="heroBioLabel">Nhật Huy | w.bio</span>
           </a>
+
+          <button class="btn-pill" onclick="copyWebLink()" title="Sao chép link trang thơ">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span>Sao chép link</span>
+          </button>
+
+          <button class="btn-pill" onclick="openQrModal()" title="Mã QR trang thơ">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+              <path d="M14 14h3v3h-3zM18 18h3v3h-3z"></path>
+            </svg>
+            <span>Mã QR</span>
+          </button>
         </div>
 
         <!-- Thẻ giới thiệu thi gia - Chỉ hiển thị đoạn giới thiệu khi ấn vào -->
@@ -1135,15 +1186,15 @@
 
       <!-- Tuyển tập nổi bật (3-5 bài tiêu biểu kèm cặp câu mở màn) -->
       <div class="section-heading">
-        <h2>Tuyển tập nổi bật</h2>
+        <h2 id="featuredSectionHeading">Tuyển tập nổi bật</h2>
         <button class="btn-pill" onclick="switchTab('poetry')">Xem tất cả thơ →</button>
       </div>
       <div class="featured-grid" id="featuredGrid"></div>
 
       <!-- Form gửi lời nhắn / cảm nhận cho tác giả (Hỗ trợ EmailJS) -->
       <div class="guestbook-box">
-        <h3>Gửi lời nhắn cho Thiên Minh</h3>
-        <p>Một vài dòng cảm nhận hoặc lời chào dịu dàng gửi đến góc viết của Nhật Huy.</p>
+        <h3 id="guestbookSectionTitle">Gửi lời nhắn cho Thiên Minh</h3>
+        <p id="guestbookSectionSubtitle">Một vài dòng cảm nhận hoặc lời chào dịu dàng gửi đến góc viết của Nhật Huy.</p>
         <form id="guestbookForm" onsubmit="handleGuestbookSubmit(event)">
           <div class="form-row">
             <input type="text" id="msgSenderName" class="input-field" placeholder="Tên hoặc bút danh của bạn..." required />
@@ -1250,11 +1301,11 @@
           </div>
         </div>
 
-        <!-- BẢNG ĐIỀU KHIỂN ADMIN (Chỉ hiện khi đăng nhập bằng tài khoản Admin) -->
+        <!-- BẢNG ĐIỀU KHIỂN ADMIN TOÀN DIỆN (Sửa mọi thông tin trên web & đồng bộ Firebase) -->
         <div id="adminStudio" class="admin-panel hidden">
           <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 16px;">
             <div>
-              <h2 style="font-family: var(--font-display); font-size: 1.6rem;">Studio Thi Gia & Đồng Bộ Firebase</h2>
+              <h2 style="font-family: var(--font-display); font-size: 1.6rem;">Studio Thi Gia & Quản Trị Toàn Diện</h2>
               <p style="font-size: 0.83rem; color: var(--text-secondary);" id="firebaseStatusText">
                 Trạng thái: Sẵn sàng đồng bộ dữ liệu lên người dùng.
               </p>
@@ -1262,28 +1313,123 @@
             <button class="btn-pill primary" onclick="openPoemEditor()">+ Đăng bài thơ mới</button>
           </div>
 
-          <!-- Tùy chỉnh thông tin Thi gia trên Home Tab -->
-          <details style="margin-bottom: 18px; background: var(--bg-secondary); padding: 14px; border-radius: 12px;">
-            <summary style="cursor: pointer; font-weight: 600; font-size: 0.9rem;">Chỉnh sửa thông tin Home Tab & Thẻ giới thiệu</summary>
+          <!-- 1. Cấu hình chung trang web (Tên web, Link QR/Share, Tiêu đề các mục) -->
+          <details style="margin-bottom: 14px; background: var(--bg-secondary); padding: 14px; border-radius: 12px;">
+            <summary style="cursor: pointer; font-weight: 600; font-size: 0.92rem;">1. Cài đặt chung Trang web, Link chia sẻ & Tiêu đề mục</summary>
             <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
-              <input type="text" id="adminEditBioUrl" class="input-field" placeholder="Link w.bio chính thức" />
-              <textarea id="adminEditIntro" class="input-field" rows="4" placeholder="Đoạn giới thiệu bút danh Thiên Minh"></textarea>
-              <button class="btn-pill primary" style="align-self: flex-end;" onclick="saveAuthorHomeInfo()">Cập nhật Home Tab</button>
+              <div class="form-row" style="margin-bottom:0;">
+                <div>
+                  <label style="font-size:0.78rem; color:var(--text-secondary);">Tên trang web (Top Bar & QR)</label>
+                  <input type="text" id="adminEditSiteTitle" class="input-field" placeholder="VD: Thiên Minh | w.poetry" />
+                </div>
+                <div>
+                  <label style="font-size:0.78rem; color:var(--text-secondary);">Link cố định cho Copy & QR (Để trống = tự động)</label>
+                  <input type="url" id="adminEditShareUrl" class="input-field" placeholder="https://..." />
+                </div>
+              </div>
+              <div class="form-row" style="margin-bottom:0;">
+                <div>
+                  <label style="font-size:0.78rem; color:var(--text-secondary);">Tiêu đề mục Tuyển tập ở Trang chủ</label>
+                  <input type="text" id="adminEditFeaturedHeading" class="input-field" placeholder="Tuyển tập nổi bật" />
+                </div>
+                <div>
+                  <label style="font-size:0.78rem; color:var(--text-secondary);">Tiêu đề khung Gửi lời nhắn</label>
+                  <input type="text" id="adminEditGuestbookTitle" class="input-field" placeholder="Gửi lời nhắn cho Thiên Minh" />
+                </div>
+              </div>
+              <div>
+                <label style="font-size:0.78rem; color:var(--text-secondary);">Mô tả dưới khung Gửi lời nhắn</label>
+                <input type="text" id="adminEditGuestbookSubtitle" class="input-field" />
+              </div>
+              <button class="btn-pill primary" style="align-self: flex-end;" onclick="saveSiteGeneralInfo()">Lưu cài đặt trang web</button>
             </div>
           </details>
 
-          <!-- Quản lý Tập thơ -->
-          <details style="margin-bottom: 18px; background: var(--bg-secondary); padding: 14px; border-radius: 12px;">
-            <summary style="cursor: pointer; font-weight: 600; font-size: 0.9rem;">Quản lý Tập thơ (Thêm / Xóa tab trượt)</summary>
-            <div id="adminCollectionList" style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px;"></div>
-            <div style="display: flex; gap: 8px; margin-top: 10px;">
+          <!-- 2. Chỉnh sửa toàn bộ thông tin Thi gia trên Home Tab -->
+          <details style="margin-bottom: 14px; background: var(--bg-secondary); padding: 14px; border-radius: 12px;">
+            <summary style="cursor: pointer; font-weight: 600; font-size: 0.92rem;">2. Chỉnh sửa đầy đủ thông tin Thi gia (Home Tab)</summary>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
+              <div class="form-row" style="margin-bottom:0;">
+                <div>
+                  <label style="font-size:0.78rem; color:var(--text-secondary);">Tên tác giả</label>
+                  <input type="text" id="adminEditAuthorName" class="input-field" placeholder="Nhật Huy" />
+                </div>
+                <div>
+                  <label style="font-size:0.78rem; color:var(--text-secondary);">Bút danh</label>
+                  <input type="text" id="adminEditPenName" class="input-field" placeholder="Thiên Minh" />
+                </div>
+              </div>
+
+              <div class="form-row" style="margin-bottom:0; align-items:end;">
+                <div>
+                  <label style="font-size:0.78rem; color:var(--text-secondary);">Link Avatar tác giả</label>
+                  <input type="text" id="adminEditAuthorAvatar" class="input-field" placeholder="URL ảnh đại diện" />
+                </div>
+                <label class="btn-pill" style="justify-content: center; height: 41px;">
+                  🖼️ Tải ảnh Avatar mới
+                  <input type="file" accept="image/*" class="hidden" onchange="handleAdminAuthorAvatarUpload(event)" />
+                </label>
+              </div>
+
+              <div class="form-row" style="margin-bottom:0;">
+                <div>
+                  <label style="font-size:0.78rem; color:var(--text-secondary);">Nhãn nút Bio</label>
+                  <input type="text" id="adminEditBioLabel" class="input-field" placeholder="Nhật Huy | w.bio" />
+                </div>
+                <div>
+                  <label style="font-size:0.78rem; color:var(--text-secondary);">Đường dẫn w.bio chính thức</label>
+                  <input type="url" id="adminEditBioUrl" class="input-field" placeholder="https://nhztwiie.github.io/w" />
+                </div>
+              </div>
+
+              <div>
+                <label style="font-size:0.78rem; color:var(--text-secondary);">Đoạn tự sự giới thiệu bút danh (Hiện khi bấm Lời ngỏ thi gia)</label>
+                <textarea id="adminEditIntro" class="input-field" rows="4"></textarea>
+              </div>
+
+              <div>
+                <label style="font-size:0.78rem; color:var(--text-secondary);">Triết lý sáng tác</label>
+                <textarea id="adminEditPhilosophy" class="input-field" rows="2"></textarea>
+              </div>
+
+              <div>
+                <label style="font-size:0.78rem; color:var(--text-secondary);">Dấu ấn sáng tác (Mỗi dòng dạng: Năm | Nội dung)</label>
+                <textarea id="adminEditMilestones" class="input-field" rows="3" placeholder="2024 | Khởi nguồn những trang viết..."></textarea>
+              </div>
+
+              <div>
+                <label style="font-size:0.78rem; color:var(--text-secondary);">Các kênh kết nối / Mạng xã hội (Mỗi dòng dạng: Tên nhãn | Đường dẫn URL)</label>
+                <textarea id="adminEditSocials" class="input-field" rows="3" placeholder="w.bio Chính Thức | https://nhztwiie.github.io/w"></textarea>
+              </div>
+
+              <button class="btn-pill primary" style="align-self: flex-end;" onclick="saveAuthorHomeInfo()">Cập nhật & Đồng bộ Home Tab</button>
+            </div>
+          </details>
+
+          <!-- 3. Quản lý Tập thơ (Thêm / Sửa tên / Xóa tab trượt) -->
+          <details style="margin-bottom: 14px; background: var(--bg-secondary); padding: 14px; border-radius: 12px;">
+            <summary style="cursor: pointer; font-weight: 600; font-size: 0.92rem;">3. Quản lý Tập thơ (Thêm / Đổi tên / Xóa tab trượt)</summary>
+            <div id="adminCollectionList" style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;"></div>
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
               <input type="text" id="newCollectionName" class="input-field" placeholder="Tên tập thơ mới (VD: Tập: Mưa Tháng Bảy)" />
-              <button class="btn-pill primary" onclick="addCollectionFromAdmin()">Thêm</button>
+              <button class="btn-pill primary" onclick="addCollectionFromAdmin()">+ Thêm</button>
             </div>
           </details>
 
-          <!-- Danh sách bài thơ để chỉnh sửa / xóa / tùy chỉnh tương tác -->
-          <h4 style="margin-bottom: 10px; font-size: 0.92rem;">Danh sách tác phẩm hiện có</h4>
+          <!-- 4. Bảo mật tài khoản Admin -->
+          <details style="margin-bottom: 18px; background: var(--bg-secondary); padding: 14px; border-radius: 12px;">
+            <summary style="cursor: pointer; font-weight: 600; font-size: 0.92rem;">4. Đổi Email & Mật khẩu đăng nhập Admin</summary>
+            <div class="form-row" style="margin-top: 12px; margin-bottom: 8px;">
+              <input type="email" id="adminEditLoginEmail" class="input-field" placeholder="Email đăng nhập Admin" />
+              <input type="text" id="adminEditLoginPwd" class="input-field" placeholder="Mật khẩu mới" />
+            </div>
+            <div style="display: flex; justify-content: flex-end;">
+              <button class="btn-pill primary" onclick="saveAdminCredentials()">Cập nhật tài khoản Admin</button>
+            </div>
+          </details>
+
+          <!-- 5. Danh sách tác phẩm để chỉnh sửa / xóa / quản lý bình luận -->
+          <h4 style="margin-bottom: 10px; font-size: 0.92rem;">5. Danh sách tác phẩm & Quản lý bình luận</h4>
           <div id="adminPoemList"></div>
         </div>
       </div>
@@ -1383,10 +1529,35 @@
       <div class="quote-card-preview" id="quoteCardVisual">
         <div class="quote-card-text" id="quoteCardText"></div>
         <div style="font-size: 0.85rem; color: var(--accent); font-weight: 600;" id="quoteCardTitle"></div>
-        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Thiên Minh · w.poetry</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Thiên Minh | w.poetry</div>
       </div>
       <div style="display: flex; justify-content: center; gap: 10px;">
         <button class="btn-pill primary" onclick="copyCurrentQuote()">📋 Sao chép đoạn thơ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL MÃ QR & CHIA SẺ LIÊN KẾT TRANG WEB (Thiên Minh | w.poetry)
+       ======================================================================== -->
+  <div class="modal-overlay" id="qrModalOverlay" onclick="if(event.target===this) closeQrModal()">
+    <div class="reader-modal" style="max-width: 440px; text-align: center;">
+      <div class="reader-toolbar">
+        <h3 style="font-family: var(--font-display); font-size: 1.4rem;">Thiên Minh | w.poetry</h3>
+        <button class="btn-pill" onclick="closeQrModal()">Đóng</button>
+      </div>
+      <p style="font-size: 0.86rem; color: var(--text-secondary);">
+        Quét mã QR hoặc sao chép liên kết bên dưới để ghé thăm và chia sẻ không gian thơ.
+      </p>
+      <div class="qr-box-wrapper">
+        <div id="qrcodeCanvas"></div>
+      </div>
+      <div style="display: flex; gap: 8px; margin: 10px 0 16px;">
+        <input type="text" id="shareUrlInput" class="input-field" readonly style="font-size: 0.82rem; text-align: center;" />
+      </div>
+      <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 10px;">
+        <button class="btn-pill primary" onclick="copyWebLink()">📋 Sao chép link</button>
+        <button class="btn-pill" onclick="downloadQrImage()">⬇️ Tải mã QR</button>
       </div>
     </div>
   </div>
@@ -1461,6 +1632,8 @@
           rootRef.on("value", (snapshot) => {
             const remoteData = snapshot.val();
             if (remoteData) {
+              if (remoteData.siteInfo) appState.siteInfo = remoteData.siteInfo;
+              if (remoteData.adminAccount) appState.adminAccount = remoteData.adminAccount;
               if (remoteData.author) appState.author = remoteData.author;
               if (remoteData.collections) appState.collections = remoteData.collections;
               if (remoteData.poems) appState.poems = remoteData.poems;
@@ -1483,6 +1656,8 @@
         if (cached) {
           try {
             const parsed = JSON.parse(cached);
+            appState.siteInfo = parsed.siteInfo || appState.siteInfo;
+            appState.adminAccount = parsed.adminAccount || appState.adminAccount;
             appState.author = parsed.author || appState.author;
             appState.collections = parsed.collections || appState.collections;
             appState.poems = parsed.poems || appState.poems;
@@ -1496,6 +1671,8 @@
       localStorage.setItem(STORAGE_KEYS.APP_DATA, JSON.stringify(appState));
       if (firebaseDb) {
         firebaseDb.ref("w_poetry_store").set({
+          siteInfo: appState.siteInfo,
+          adminAccount: appState.adminAccount,
           author: appState.author,
           collections: appState.collections,
           poems: appState.poems,
@@ -1584,6 +1761,25 @@
     // 4. HIỂN THỊ HOME TAB (NHẬT HUY / THIÊN MINH / THẺ GIỚI THIỆU ẤN MỞ)
     // ========================================================================
     function renderHomeTab() {
+      const site = appState.siteInfo || {};
+      if (site.title) {
+        document.title = site.title;
+        const topBrand = document.getElementById("topBrandTitle");
+        if (topBrand) topBrand.textContent = site.title;
+      }
+      if (site.featuredHeading) {
+        const fh = document.getElementById("featuredSectionHeading");
+        if (fh) fh.textContent = site.featuredHeading;
+      }
+      if (site.guestbookTitle) {
+        const gt = document.getElementById("guestbookSectionTitle");
+        if (gt) gt.textContent = site.guestbookTitle;
+      }
+      if (site.guestbookSubtitle) {
+        const gs = document.getElementById("guestbookSectionSubtitle");
+        if (gs) gs.textContent = site.guestbookSubtitle;
+      }
+
       const author = appState.author;
       document.getElementById("heroAvatar").src = author.avatar;
       document.getElementById("heroName").textContent = author.name;
@@ -1809,13 +2005,17 @@
     function renderReaderContent(poem) {
       const embedUrl = getSpotifyEmbedUrl(poem.spotifyUrl);
       const reactions = getUserReactions()[poem.id] || {};
+      const isAdmin = getLoggedUser()?.role === "admin";
       const commentsHtml = (poem.comments || [])
         .map(
           (c) => `
           <div class="comment-item">
             <div class="comment-item-head">
               <span>${escapeHtml(c.authorName)}</span>
-              <span style="color: var(--text-muted); font-weight: 400;">${escapeHtml(c.createdAt)}</span>
+              <span style="display:flex; align-items:center; gap:8px; color: var(--text-muted); font-weight: 400;">
+                ${escapeHtml(c.createdAt)}
+                ${isAdmin ? `<button onclick="deleteComment('${poem.id}', '${c.id}')" style="border:none; background:none; color:#d9534f; cursor:pointer; font-size:0.78rem;" title="Xóa bình luận">Xóa</button>` : ""}
+              </span>
             </div>
             <div>${escapeHtml(c.text)}</div>
           </div>
@@ -2096,22 +2296,46 @@
     }
 
     // ========================================================================
-    // 8. ADMIN STUDIO: QUẢN LÝ TẬP THƠ, ĐĂNG/SỬA/XÓA BÀI THƠ & ĐỒNG BỘ FIREBASE
+    // 8. ADMIN STUDIO TOÀN DIỆN: SỬA MỌI THÔNG TIN & ĐỒNG BỘ FIREBASE
     // ========================================================================
     function renderAdminStudio() {
-      document.getElementById("adminEditBioUrl").value = appState.author.bioUrl || "";
-      document.getElementById("adminEditIntro").value = appState.author.introParagraph || "";
+      const site = appState.siteInfo || {};
+      document.getElementById("adminEditSiteTitle").value = site.title || "Thiên Minh | w.poetry";
+      document.getElementById("adminEditShareUrl").value = site.shareUrl || "";
+      document.getElementById("adminEditFeaturedHeading").value = site.featuredHeading || "Tuyển tập nổi bật";
+      document.getElementById("adminEditGuestbookTitle").value = site.guestbookTitle || "Gửi lời nhắn cho Thiên Minh";
+      document.getElementById("adminEditGuestbookSubtitle").value = site.guestbookSubtitle || "";
 
-      // Danh sách tập thơ
+      const author = appState.author;
+      document.getElementById("adminEditAuthorName").value = author.name || "";
+      document.getElementById("adminEditPenName").value = author.penName || "";
+      document.getElementById("adminEditAuthorAvatar").value = author.avatar || "";
+      document.getElementById("adminEditBioLabel").value = author.bioLabel || "";
+      document.getElementById("adminEditBioUrl").value = author.bioUrl || "";
+      document.getElementById("adminEditIntro").value = author.introParagraph || "";
+      document.getElementById("adminEditPhilosophy").value = author.philosophy || "";
+
+      document.getElementById("adminEditMilestones").value = (author.milestones || [])
+        .map((m) => `${m.year} | ${m.text}`)
+        .join("\n");
+
+      document.getElementById("adminEditSocials").value = (author.socials || [])
+        .map((s) => `${s.label} | ${s.url}`)
+        .join("\n");
+
+      document.getElementById("adminEditLoginEmail").value = appState.adminAccount.email || "";
+      document.getElementById("adminEditLoginPwd").value = appState.adminAccount.password || "";
+
+      // Danh sách tập thơ (Cho phép đổi tên trực tiếp hoặc xóa)
       const colList = document.getElementById("adminCollectionList");
       colList.innerHTML = appState.collections
         .map((c) => {
           const canDelete = c.id !== "all";
           return `
-            <span class="poem-badge" style="display:inline-flex; align-items:center; gap:6px;">
-              ${escapeHtml(c.name)}
-              ${canDelete ? `<button onclick="deleteCollection('${c.id}')" style="border:none; background:none; color:inherit; cursor:pointer; font-weight:bold;">×</button>` : ""}
-            </span>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <input type="text" class="input-field" value="${escapeHtml(c.name)}" onchange="renameCollection('${c.id}', this.value)" style="padding:7px 12px; font-size:0.85rem;" />
+              ${canDelete ? `<button class="btn-pill" style="color:#d9534f; padding:6px 12px;" onclick="deleteCollection('${c.id}')">Xóa</button>` : `<span class="poem-badge">Mặc định</span>`}
+            </div>
           `;
         })
         .join("");
@@ -2129,6 +2353,7 @@
               </div>
             </div>
             <div style="display:flex; gap:8px;">
+              <button class="btn-pill" onclick="openReaderModal('${p.id}', true)">Bình luận</button>
               <button class="btn-pill" onclick="openPoemEditor('${p.id}')">Sửa</button>
               <button class="btn-pill" style="color:#d9534f;" onclick="deletePoem('${p.id}')">Xóa</button>
             </div>
@@ -2138,14 +2363,92 @@
         .join("");
     }
 
+    function saveSiteGeneralInfo() {
+      if (!appState.siteInfo) appState.siteInfo = {};
+      appState.siteInfo.title = document.getElementById("adminEditSiteTitle").value.trim() || "Thiên Minh | w.poetry";
+      appState.siteInfo.shareUrl = document.getElementById("adminEditShareUrl").value.trim();
+      appState.siteInfo.featuredHeading = document.getElementById("adminEditFeaturedHeading").value.trim() || "Tuyển tập nổi bật";
+      appState.siteInfo.guestbookTitle = document.getElementById("adminEditGuestbookTitle").value.trim() || "Gửi lời nhắn cho Thiên Minh";
+      appState.siteInfo.guestbookSubtitle = document.getElementById("adminEditGuestbookSubtitle").value.trim();
+      pushDataToFirebase();
+      refreshAllUI();
+      showToast("Đã cập nhật & đồng bộ cài đặt chung trang web!");
+    }
+
+    function handleAdminAuthorAvatarUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        document.getElementById("adminEditAuthorAvatar").value = reader.result;
+        showToast("Đã tải ảnh đại diện tác giả, hãy bấm 'Cập nhật & Đồng bộ Home Tab'");
+      };
+      reader.readAsDataURL(file);
+    }
+
     function saveAuthorHomeInfo() {
+      const name = document.getElementById("adminEditAuthorName").value.trim();
+      const penName = document.getElementById("adminEditPenName").value.trim();
+      const avatar = document.getElementById("adminEditAuthorAvatar").value.trim();
+      const bioLabel = document.getElementById("adminEditBioLabel").value.trim();
       const bioUrl = document.getElementById("adminEditBioUrl").value.trim();
       const intro = document.getElementById("adminEditIntro").value.trim();
+      const philosophy = document.getElementById("adminEditPhilosophy").value.trim();
+
+      if (name) appState.author.name = name;
+      if (penName) appState.author.penName = penName;
+      if (avatar) appState.author.avatar = avatar;
+      if (bioLabel) appState.author.bioLabel = bioLabel;
       if (bioUrl) appState.author.bioUrl = bioUrl;
       if (intro) appState.author.introParagraph = intro;
+      appState.author.philosophy = philosophy;
+
+      const rawMilestones = document.getElementById("adminEditMilestones").value.trim();
+      appState.author.milestones = rawMilestones
+        ? rawMilestones.split("\n").map((line) => {
+            const parts = line.split("|");
+            return {
+              year: (parts[0] || "").trim(),
+              text: (parts.slice(1).join("|") || "").trim()
+            };
+          }).filter((item) => item.year || item.text)
+        : [];
+
+      const rawSocials = document.getElementById("adminEditSocials").value.trim();
+      appState.author.socials = rawSocials
+        ? rawSocials.split("\n").map((line) => {
+            const parts = line.split("|");
+            return {
+              label: (parts[0] || "Liên kết").trim(),
+              url: (parts.slice(1).join("|") || "#").trim()
+            };
+          }).filter((item) => item.url)
+        : [];
+
+      // Đồng bộ luôn với hồ sơ đăng nhập hiện tại của Admin
+      const currentUser = getLoggedUser();
+      if (currentUser && currentUser.role === "admin") {
+        currentUser.name = appState.author.name;
+        currentUser.avatar = appState.author.avatar;
+        setLoggedUser(currentUser);
+      }
+
       pushDataToFirebase();
-      renderHomeTab();
-      showToast("Đã cập nhật & đồng bộ thông tin Home Tab");
+      refreshAllUI();
+      showToast("Đã cập nhật & đồng bộ toàn bộ Home Tab!");
+    }
+
+    function saveAdminCredentials() {
+      const newEmail = document.getElementById("adminEditLoginEmail").value.trim();
+      const newPwd = document.getElementById("adminEditLoginPwd").value.trim();
+      if (!newEmail || !newPwd) {
+        showToast("Email và mật khẩu Admin không được để trống.");
+        return;
+      }
+      appState.adminAccount.email = newEmail;
+      appState.adminAccount.password = newPwd;
+      pushDataToFirebase();
+      showToast("Đã cập nhật thông tin đăng nhập Admin!");
     }
 
     function addCollectionFromAdmin() {
@@ -2158,6 +2461,18 @@
       pushDataToFirebase();
       refreshAllUI();
       showToast("Đã thêm tập thơ mới");
+    }
+
+    function renameCollection(colId, newName) {
+      const trimmed = newName.trim();
+      if (!trimmed) return;
+      const col = appState.collections.find((c) => c.id === colId);
+      if (col) {
+        col.name = trimmed;
+        pushDataToFirebase();
+        refreshAllUI();
+        showToast("Đã đổi tên tập thơ");
+      }
     }
 
     function promptAddCollection() {
@@ -2176,6 +2491,18 @@
       pushDataToFirebase();
       refreshAllUI();
       showToast("Đã xóa tập thơ");
+    }
+
+    function deleteComment(poemId, commentId) {
+      if (!confirm("Xóa bình luận này?")) return;
+      const poem = appState.poems.find((p) => p.id === poemId);
+      if (!poem) return;
+      poem.comments = (poem.comments || []).filter((c) => c.id !== commentId);
+      pushDataToFirebase();
+      renderReaderContent(poem);
+      renderPoetryFeed();
+      renderAdminStudio();
+      showToast("Đã xóa bình luận");
     }
 
     function openPoemEditor(poemId = null) {
@@ -2319,6 +2646,84 @@
         showToast(`Cảm ơn ${senderName}, lời nhắn đã được gửi đến Thiên Minh!`);
         e.target.reset();
       }
+    }
+
+    // ========================================================================
+    // CHIA SẺ LIÊN KẾT & MÃ QR TÍCH HỢP (Thiên Minh | w.poetry)
+    // ========================================================================
+    function getShareableSiteUrl() {
+      const configuredUrl = appState.siteInfo && appState.siteInfo.shareUrl ? appState.siteInfo.shareUrl.trim() : "";
+      return configuredUrl || window.location.href.split("#")[0];
+    }
+
+    function copyWebLink() {
+      const url = getShareableSiteUrl();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => {
+          showToast("Đã sao chép liên kết Thiên Minh | w.poetry!");
+        }).catch(() => fallbackCopyText(url));
+      } else {
+        fallbackCopyText(url);
+      }
+    }
+
+    function fallbackCopyText(text) {
+      const temp = document.createElement("input");
+      temp.value = text;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand("copy");
+      document.body.removeChild(temp);
+      showToast("Đã sao chép liên kết Thiên Minh | w.poetry!");
+    }
+
+    function openQrModal() {
+      const url = getShareableSiteUrl();
+      const input = document.getElementById("shareUrlInput");
+      const qrContainer = document.getElementById("qrcodeCanvas");
+      if (input) input.value = url;
+      if (qrContainer) {
+        qrContainer.innerHTML = "";
+        if (window.QRCode) {
+          new QRCode(qrContainer, {
+            text: url,
+            width: 196,
+            height: 196,
+            colorDark: "#2b2623",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+          });
+        } else {
+          qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=196x196&data=${encodeURIComponent(url)}" alt="QR Code" />`;
+        }
+      }
+      document.getElementById("qrModalOverlay").classList.add("open");
+    }
+
+    function closeQrModal() {
+      document.getElementById("qrModalOverlay").classList.remove("open");
+    }
+
+    function downloadQrImage() {
+      const canvas = document.querySelector("#qrcodeCanvas canvas");
+      const img = document.querySelector("#qrcodeCanvas img");
+      let dataUrl = "";
+      if (canvas) {
+        dataUrl = canvas.toDataURL("image/png");
+      } else if (img && img.src) {
+        dataUrl = img.src;
+      }
+      if (!dataUrl) {
+        showToast("Không thể tạo tệp ảnh QR lúc này.");
+        return;
+      }
+      const link = document.createElement("a");
+      link.href = dataUrl;
+      link.download = "Thien-Minh-w-poetry-QR.png";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast("Đã tải xuống mã QR (Thien-Minh-w-poetry-QR.png)");
     }
 
     // ========================================================================
