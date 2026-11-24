@@ -1,73 +1,151 @@
 <!DOCTYPE html>
-<html lang="vi" data-theme="light">
+<html lang="vi" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Thiên Minh | w.poetry</title>
-  <meta name="description" content="lắng đọng." />
+  <meta name="description" content="Nhật Huy — Bút danh Thiên Minh. Không gian thơ trầm mặc, điềm tĩnh." />
+  <meta name="theme-color" id="meta-theme-color" content="#111317" />
 
-  <!-- Google Fonts: Serif văn học cho thơ & Sans-serif hiện đại cho giao diện -->
+  <!-- Áp dụng Sáng/Tối theo thời gian thực ngay trước khi render -->
+  <script>
+    (function () {
+      const hour = new Date().getHours();
+      const autoTheme = (hour >= 6 && hour < 18) ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", autoTheme);
+      const metaTheme = document.getElementById("meta-theme-color");
+      if (metaTheme) {
+        metaTheme.setAttribute("content", autoTheme === "light" ? "#e9efe7" : "#111317");
+      }
+    })();
+  </script>
+
+  <!-- Fonts: Plus Jakarta Sans (hiện đại, sang trọng) + Newsreader (văn học thanh thoát, không sến) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-  <!-- EmailJS SDK (Tùy chọn gửi lời nhắn về Gmail) -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-
-  <!-- QRCodeJS (Tạo mã QR tích hợp & tải về PNG) -->
+  <!-- Icons, QRCodeJS, EmailJS & Firebase -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
   <!-- Dữ liệu tách biệt -->
   <script src="./data.js"></script>
 
   <style>
     /* ==========================================================================
-       1. BIẾN MÀU SẮC & CHỦ ĐỀ (Nền kem ấm ban ngày / Xám than-xanh đen ban đêm)
+       LIQUID GLASS & BIO-LINK ARCHITECTURE (LẤY CẢM HỨNG TỪ INDEX.HTML V4)
        ========================================================================== */
     :root {
-      --bg-primary: #faf6f0;
-      --bg-secondary: #f3ece1;
-      --bg-card: rgba(255, 252, 247, 0.85);
-      --bg-glass: rgba(250, 246, 240, 0.78);
-      --text-primary: #2b2623;
-      --text-secondary: #685f58;
-      --text-muted: #968c83;
-      --accent: #8c6249;
-      --accent-soft: rgba(140, 98, 73, 0.12);
-      --accent-hover: #734e38;
-      --border-color: rgba(140, 98, 73, 0.18);
-      --shadow-soft: 0 12px 32px -8px rgba(43, 38, 35, 0.08);
-      --shadow-card: 0 8px 24px -6px rgba(43, 38, 35, 0.06);
-      --font-serif: 'Lora', 'Cormorant Garamond', Georgia, serif;
-      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --spring-easing: cubic-bezier(0.32, 0.72, 0, 1);
+      --silky-ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --liquid-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --mouse-x: 50%;
+      --mouse-y: 50%;
+      --poem-font-size: 1.06rem;
       --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      --poem-font-size: 1.125rem;
-      --radius-lg: 22px;
-      --radius-md: 14px;
-      --radius-pill: 999px;
-      --transition: all 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+      --font-poem: 'Newsreader', Georgia, serif;
     }
 
-    [data-theme="dark"] {
-      --bg-primary: #11151c;
-      --bg-secondary: #181e28;
-      --bg-card: rgba(24, 30, 40, 0.86);
-      --bg-glass: rgba(17, 21, 28, 0.82);
-      --text-primary: #edeae4;
-      --text-secondary: #a8b0bd;
-      --text-muted: #727b8a;
-      --accent: #d4a373;
-      --accent-soft: rgba(212, 163, 115, 0.14);
-      --accent-hover: #e2b68a;
-      --border-color: rgba(212, 163, 115, 0.18);
-      --shadow-soft: 0 16px 36px -8px rgba(0, 0, 0, 0.45);
-      --shadow-card: 0 10px 28px -6px rgba(0, 0, 0, 0.35);
+    :root[data-theme="dark"] {
+      --bg-gradient: radial-gradient(circle at 50% 0%, #262a31 0%, #111317 65%, #08090a 100%);
+      --glass-bg: rgba(255, 255, 255, 0.048);
+      --glass-surface: rgba(255, 255, 255, 0.035);
+      --glass-border: rgba(255, 255, 255, 0.15);
+      --glass-border-highlight: rgba(255, 255, 255, 0.42);
+      --glass-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.78),
+        inset 0 1.5px 2px rgba(255, 255, 255, 0.32),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.62);
+      --glass-glow: rgba(224, 224, 224, 0.14);
+
+      --spotlight-surface: rgba(255, 255, 255, 0.075);
+      --spotlight-border: rgba(255, 255, 255, 0.5);
+
+      --text-title: #f8fafc;
+      --text-sub: #a8b2c1;
+      --text-muted: #707a8a;
+      --text-quote: #eef2f6;
+      --shimmer-highlight: #ffffff;
+      --shimmer-base: rgba(226, 232, 240, 0.58);
+
+      --accent: #c8a986;
+      --accent-soft: rgba(200, 169, 134, 0.14);
+      --accent-ink: #111317;
+
+      --pill-bg: rgba(255, 255, 255, 0.055);
+      --pill-border: rgba(255, 255, 255, 0.15);
+      --pill-hover-bg: rgba(255, 255, 255, 0.11);
+      --pill-hover-border: rgba(255, 255, 255, 0.44);
+      --pill-hover-glow: 0 12px 28px rgba(0, 0, 0, 0.35);
+
+      --dock-bg: rgba(18, 20, 25, 0.62);
+      --dock-border: rgba(255, 255, 255, 0.18);
+      --indicator-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.24) 0%, rgba(160, 170, 185, 0.12) 100%);
+      --indicator-border: rgba(255, 255, 255, 0.42);
+
+      --orb-1: rgba(255, 255, 255, 0.26);
+      --orb-2: rgba(155, 170, 195, 0.28);
+      --orb-3: rgba(200, 175, 145, 0.2);
+
+      --modal-bg: rgba(17, 19, 23, 0.88);
+      --danger: #f87171;
+    }
+
+    :root[data-theme="light"] {
+      --bg-gradient: radial-gradient(circle at 50% 0%, #f6f8f5 0%, #e9efe7 62%, #d8e2d4 100%);
+      --glass-bg: rgba(255, 255, 255, 0.68);
+      --glass-surface: rgba(255, 255, 255, 0.52);
+      --glass-border: rgba(255, 255, 255, 0.88);
+      --glass-border-highlight: rgba(255, 255, 255, 1);
+      --glass-shadow:
+        0 25px 60px rgba(20, 31, 22, 0.08),
+        inset 0 2px 3px rgba(255, 255, 255, 0.95),
+        inset 0 -2px 4px rgba(20, 31, 22, 0.04);
+      --glass-glow: rgba(34, 197, 94, 0.12);
+
+      --spotlight-surface: rgba(20, 31, 22, 0.04);
+      --spotlight-border: rgba(22, 163, 74, 0.45);
+
+      --text-title: #141f16;
+      --text-sub: #4b5c4f;
+      --text-muted: #6e7e72;
+      --text-quote: #18231a;
+      --shimmer-highlight: #166534;
+      --shimmer-base: rgba(20, 31, 22, 0.78);
+
+      --accent: #3f5e4b;
+      --accent-soft: rgba(63, 94, 75, 0.11);
+      --accent-ink: #ffffff;
+
+      --pill-bg: rgba(255, 255, 255, 0.72);
+      --pill-border: rgba(255, 255, 255, 0.92);
+      --pill-hover-bg: rgba(255, 255, 255, 0.95);
+      --pill-hover-border: #86efac;
+      --pill-hover-glow: 0 12px 28px rgba(20, 31, 22, 0.08);
+
+      --dock-bg: rgba(255, 255, 255, 0.76);
+      --dock-border: rgba(255, 255, 255, 0.95);
+      --indicator-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(220, 252, 231, 0.85) 100%);
+      --indicator-border: rgba(134, 239, 172, 0.65);
+
+      --orb-1: rgba(255, 255, 255, 0.9);
+      --orb-2: rgba(187, 247, 208, 0.45);
+      --orb-3: rgba(254, 243, 199, 0.4);
+
+      --modal-bg: rgba(246, 248, 245, 0.92);
+      --danger: #dc2626;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      font-family: var(--font-sans);
+      -webkit-tap-highlight-color: transparent;
     }
 
     html {
@@ -75,155 +153,546 @@
     }
 
     body {
-      font-family: var(--font-sans);
-      background-color: var(--bg-primary);
-      color: var(--text-primary);
-      line-height: 1.65;
       min-height: 100vh;
-      transition: background-color 0.45s ease, color 0.45s ease;
+      min-height: 100dvh;
+      background: var(--bg-gradient);
+      color: var(--text-title);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      position: relative;
       overflow-x: hidden;
-      padding-bottom: 96px;
+      padding: 20px 14px 104px;
+      transition: background 0.6s ease, color 0.4s ease;
     }
 
-    /* Nền họa tiết ánh sáng mềm mại */
-    body::before {
-      content: "";
+    /* ==========================================================================
+       BACKGROUND ORBS & AMBIENT CANVAS
+       ========================================================================== */
+    .ios26-bg-canvas {
       position: fixed;
-      top: -15%;
-      right: -10%;
-      width: 480px;
-      height: 480px;
-      border-radius: 50%;
-      background: radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
       pointer-events: none;
-      z-index: -1;
+      overflow: hidden;
+      contain: strict;
     }
 
-    /* Thanh tiến độ đọc phía trên cùng */
+    #ambient-particles {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+    }
+
+    .liquid-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(26px);
+      mix-blend-mode: overlay;
+      will-change: transform;
+      opacity: 0.82;
+      z-index: 1;
+      transition: background 0.6s ease;
+      transform: translateZ(0);
+    }
+
+    .orb-primary {
+      width: 420px;
+      height: 420px;
+      top: -80px;
+      left: -60px;
+      background: radial-gradient(circle at 35% 35%, var(--orb-1) 0%, rgba(255, 255, 255, 0.08) 60%, transparent 80%);
+      animation: floatFluid1 15s infinite ease-in-out alternate;
+    }
+
+    .orb-secondary {
+      width: 380px;
+      height: 380px;
+      bottom: -60px;
+      right: -50px;
+      background: radial-gradient(circle at 35% 35%, var(--orb-2) 0%, rgba(255, 255, 255, 0.08) 60%, transparent 80%);
+      animation: floatFluid2 17s infinite ease-in-out alternate;
+    }
+
+    .orb-accent {
+      width: 300px;
+      height: 300px;
+      top: 38%;
+      left: 32%;
+      background: radial-gradient(circle at 35% 35%, var(--orb-3) 0%, rgba(255, 255, 255, 0.08) 60%, transparent 80%);
+      animation: floatFluid3 12s infinite ease-in-out alternate;
+    }
+
+    @keyframes floatFluid1 {
+      0% { transform: translate3d(0, 0, 0) scale(1); }
+      100% { transform: translate3d(85px, 105px, 0) scale(1.12); }
+    }
+    @keyframes floatFluid2 {
+      0% { transform: translate3d(0, 0, 0) scale(1); }
+      100% { transform: translate3d(-75px, -100px, 0) scale(1.14); }
+    }
+    @keyframes floatFluid3 {
+      0% { transform: translate3d(0, 0, 0) scale(0.94); }
+      100% { transform: translate3d(70px, -55px, 0) scale(1.16); }
+    }
+
+    .glass-mesh-overlay {
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 0);
+      background-size: 20px 20px;
+      z-index: 2;
+      pointer-events: none;
+      opacity: 0.25;
+    }
+
     .reading-progress {
       position: fixed;
       top: 0;
       left: 0;
-      height: 3px;
+      height: 2.5px;
       width: 0%;
-      background: linear-gradient(90deg, var(--accent), #d4a373);
-      z-index: 9999;
+      background: linear-gradient(90deg, var(--accent), var(--shimmer-highlight));
+      z-index: 120;
       transition: width 0.12s ease-out;
     }
 
     /* ==========================================================================
-       2. TOP BAR (Thương hiệu, Đồng hồ thiết bị, Chế độ Sáng/Tối)
+       MAIN BIO-LINK LIQUID GLASS CARD
+       ========================================================================== */
+    .liquid-card-ios26 {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 448px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(24px) saturate(175%);
+      -webkit-backdrop-filter: blur(24px) saturate(175%);
+      border: 1.5px solid var(--glass-border);
+      border-radius: 40px;
+      box-shadow: var(--glass-shadow);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateZ(0);
+      transition:
+        box-shadow 0.4s ease,
+        background 0.5s ease,
+        border-color 0.5s ease,
+        transform 0.45s var(--silky-ease),
+        opacity 0.45s var(--silky-ease);
+    }
+
+    .liquid-card-ios26::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(
+        420px circle at var(--mouse-x) var(--mouse-y),
+        var(--spotlight-surface),
+        transparent 65%
+      );
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .liquid-card-ios26:hover::after {
+        opacity: 1;
+      }
+    }
+
+    .card-border-glow {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1.5px;
+      background: radial-gradient(
+        280px circle at var(--mouse-x) var(--mouse-y),
+        var(--spotlight-border),
+        transparent 70%
+      );
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      z-index: 25;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .liquid-card-ios26:hover .card-border-glow {
+        opacity: 1;
+      }
+    }
+
+    .theme-transitioning {
+      opacity: 0.35 !important;
+      transform: scale(0.985) !important;
+    }
+
+    .water-ripple {
+      position: absolute;
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.08) 55%, transparent 100%);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      pointer-events: none;
+      animation: liquidSplash 0.72s cubic-bezier(0.15, 0.85, 0.25, 1) forwards;
+      z-index: 50;
+    }
+
+    @keyframes liquidSplash {
+      0% { width: 0; height: 0; opacity: 0.9; transform: translate(-50%, -50%) scale(0.2); }
+      100% { width: 220px; height: 220px; opacity: 0; transform: translate(-50%, -50%) scale(1.4); }
+    }
+
+    /* ==========================================================================
+       TOP BAR & BIO HEADER (GIỐNG BỐ CỤC BIO LINK TINH GỌN)
        ========================================================================== */
     .top-bar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      background: var(--bg-glass);
-      border-bottom: 1px solid var(--border-color);
-      padding: 12px 20px;
-    }
-
-    .top-bar-inner {
-      max-width: 960px;
-      margin: 0 auto;
+      padding: 18px 20px 6px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      align-items: center;
+      z-index: 20;
+      position: relative;
     }
 
-    .brand {
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-      cursor: pointer;
-    }
-
-    .brand-title {
-      font-family: var(--font-display);
-      font-size: 1.55rem;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      color: var(--text-primary);
-    }
-
-    .brand-sub {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      font-style: italic;
-    }
-
-    .top-controls {
+    .top-bar-left {
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .clock-pill {
+    .theme-toggle-track {
+      position: relative;
+      width: 68px;
+      height: 36px;
+      background: var(--pill-bg);
+      border: 1.5px solid var(--glass-border);
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      padding: 3px;
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: transform 0.25s var(--spring-easing);
+    }
+
+    .theme-toggle-track:hover { transform: scale(1.03); }
+    .theme-toggle-track:active { transform: scale(0.95); }
+
+    .theme-orb-indicator {
+      position: absolute;
+      top: 2.5px;
+      left: 3px;
+      width: 29px;
+      height: 29px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #e5e7eb 0%, #9ca3af 100%);
+      border: 1.5px solid #ffffff;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.45s var(--liquid-bounce), background 0.4s ease;
+    }
+
+    .orb-icon {
+      font-size: 0.78rem;
+      position: absolute;
+      color: #111827;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .icon-sun { opacity: 0; transform: scale(0.5) rotate(-90deg); }
+    .icon-moon { opacity: 1; transform: scale(1) rotate(0deg); }
+
+    [data-theme="light"] .theme-orb-indicator {
+      transform: translate3d(32px, 0, 0);
+      background: linear-gradient(135deg, #ffffff 0%, #dcfce7 100%);
+    }
+    [data-theme="light"] .icon-sun { opacity: 1; transform: scale(1) rotate(0deg); }
+    [data-theme="light"] .icon-moon { opacity: 0; transform: scale(0.5) rotate(90deg); }
+
+    .realtime-clock-wrap {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 6px 12px;
-      border-radius: var(--radius-pill);
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      font-size: 0.8rem;
-      color: var(--text-secondary);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-sub);
       font-variant-numeric: tabular-nums;
+      letter-spacing: 0.01em;
     }
 
     .sync-dot {
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
-      background: #4caf50;
+      background: #22c55e;
       display: inline-block;
-      title: "Đồng bộ dữ liệu";
     }
 
-    .theme-btn {
+    .top-bar-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .glass-btn-ios26,
+    .bio-link-row,
+    .btn-action-item,
+    .btn-download-icon,
+    .pill-action {
+      position: relative;
+      overflow: hidden;
+      transition:
+        transform 0.26s var(--spring-easing),
+        border-color 0.25s ease,
+        background 0.25s ease,
+        box-shadow 0.25s ease,
+        color 0.25s ease;
+    }
+
+    .glass-btn-ios26:active,
+    .bio-link-row:active,
+    .btn-action-item:active,
+    .btn-download-icon:active,
+    .pill-action:active,
+    .nav-tab-btn:active {
+      transform: scale(0.96) !important;
+      transition-duration: 0.08s;
+    }
+
+    .glass-btn-ios26 {
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      background: var(--pill-bg);
+      border: 1.5px solid var(--pill-border);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-title);
+      font-size: 0.92rem;
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .glass-btn-ios26:hover {
+      transform: translateY(-2px);
+      border-color: var(--glass-border-highlight);
+      background: var(--pill-hover-bg);
+    }
+
+    /* Bio Header (Avatar + Tên + Bút danh + Handle/Bio link) */
+    .bio-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 8px 22px 14px;
+      z-index: 15;
+      position: relative;
+    }
+
+    @keyframes avatarBreathe {
+      0%, 100% { transform: translate3d(0, 0px, 0) scale(1); }
+      50% { transform: translate3d(0, -2.5px, 0) scale(1.02); }
+    }
+
+    .avatar-breathe-wrap {
+      animation: avatarBreathe 5.5s ease-in-out infinite;
+      will-change: transform;
+    }
+
+    .avatar-ring {
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      padding: 3.5px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.1) 100%);
+      border: 1.5px solid var(--glass-border);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.22), 0 0 18px var(--glass-glow);
+      transition: transform 0.6s var(--silky-ease), box-shadow 0.6s var(--silky-ease);
+      cursor: pointer;
+    }
+
+    .avatar-ring:hover {
+      transform: scale(1.04) rotate(4deg);
+    }
+
+    .avatar-ring img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      filter: grayscale(85%);
+      transition: filter 0.55s var(--silky-ease);
+    }
+
+    .avatar-ring:hover img {
+      filter: grayscale(0%);
+    }
+
+    .bio-name {
+      font-size: 1.48rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--text-title);
+      margin-top: 10px;
+      line-height: 1.25;
+    }
+
+    .bio-penname {
+      font-family: var(--font-poem);
+      font-style: italic;
+      font-size: 0.98rem;
+      color: var(--accent);
+      margin-top: 2px;
+    }
+
+    .bio-subline {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      font-size: 0.78rem;
+      color: var(--text-sub);
+    }
+
+    .bio-subline a {
+      color: var(--text-sub);
+      text-decoration: none;
+      font-weight: 600;
+      border-bottom: 1px dashed var(--glass-border);
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .bio-subline a:hover {
+      color: var(--text-title);
+      border-color: var(--glass-border-highlight);
+    }
+
+    /* Thanh nút tác vụ dạng bio link */
+    .bio-quick-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 7px;
+      margin-top: 12px;
+      width: 100%;
+    }
+
+    .pill-action {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 6px 12px;
-      border-radius: var(--radius-pill);
-      border: 1px solid var(--border-color);
-      background: var(--bg-card);
-      color: var(--text-primary);
-      font-size: 0.8rem;
+      padding: 7px 13px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-title);
+      background: var(--pill-bg);
+      border: 1.2px solid var(--pill-border);
       cursor: pointer;
-      transition: var(--transition);
+      text-decoration: none;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
 
-    .theme-btn:hover {
+    .pill-action:hover {
+      background: var(--pill-hover-bg);
+      border-color: var(--pill-hover-border);
+      transform: translateY(-1.5px);
+    }
+
+    .pill-action.accent {
+      background: var(--accent);
+      color: var(--accent-ink);
       border-color: var(--accent);
-      background: var(--accent-soft);
+    }
+
+    /* Drawer Lời ngỏ thi gia */
+    .intro-drawer {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      width: 100%;
+      transition: max-height 0.45s var(--spring-easing), opacity 0.35s ease, margin 0.35s ease;
+      margin-top: 0;
+    }
+
+    .intro-drawer.open {
+      max-height: 620px;
+      opacity: 1;
+      margin-top: 12px;
+    }
+
+    .intro-panel {
+      text-align: left;
+      padding: 15px 16px;
+      border-radius: 22px;
+      background: var(--glass-surface);
+      border: 1px solid var(--glass-border);
+      font-size: 0.85rem;
+      line-height: 1.72;
+      color: var(--text-quote);
+    }
+
+    .intro-panel p {
+      font-family: var(--font-poem);
+      font-size: 0.96rem;
+      line-height: 1.78;
+    }
+
+    .intro-meta-sep {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--glass-border);
+      font-size: 0.78rem;
+      color: var(--text-sub);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
 
     /* ==========================================================================
-       3. CONTAINER CHÍNH & HIỆU ỨNG CHUYỂN TAB
+       TAB CONTENT AREA
        ========================================================================== */
-    .container {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 28px 20px 40px;
+    .content-body {
+      padding: 4px 18px 18px;
+      position: relative;
+      z-index: 10;
     }
 
-    .tab-view {
+    .tab-page {
       display: none;
-      animation: fadeSlideUp 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation: tabFadeIn 0.36s var(--silky-ease) forwards;
     }
 
-    .tab-view.active {
+    .tab-page.active-tab {
       display: block;
     }
 
-    @keyframes fadeSlideUp {
+    @keyframes tabFadeIn {
       from {
         opacity: 0;
-        transform: translateY(12px);
+        transform: translateY(8px);
       }
       to {
         opacity: 1;
@@ -231,450 +700,291 @@
       }
     }
 
-    /* ==========================================================================
-       4. HOME TAB (Ở GIỮA: AVT, Nhật Huy, Thiên Minh, Thẻ giới thiệu ấn mở, w.bio)
-       ========================================================================== */
-    .poet-hero {
-      text-align: center;
-      padding: 28px 22px;
-      border-radius: var(--radius-lg);
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      box-shadow: var(--shadow-soft);
-      margin-bottom: 32px;
-      position: relative;
-    }
-
-    .poet-avatar-wrap {
-      width: 108px;
-      height: 108px;
-      margin: 0 auto 16px;
-      border-radius: 50%;
-      padding: 4px;
-      background: linear-gradient(135deg, var(--accent), transparent 75%);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-    }
-
-    .poet-avatar {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      object-fit: cover;
-      display: block;
-      background: var(--bg-secondary);
-    }
-
-    .poet-name {
-      font-family: var(--font-display);
-      font-size: 2rem;
-      font-weight: 700;
-      letter-spacing: 0.01em;
-      line-height: 1.2;
-    }
-
-    .poet-penname {
-      font-family: var(--font-serif);
-      font-size: 0.98rem;
-      font-style: italic;
-      color: var(--accent);
-      margin-top: 4px;
-      margin-bottom: 16px;
-    }
-
-    .hero-actions {
+    .section-kicker {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin: 14px 0 8px;
+      padding: 0 2px;
+    }
+
+    .section-kicker span {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+
+    .section-kicker button {
+      background: none;
+      border: none;
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      cursor: pointer;
+      padding: 2px 4px;
+    }
+
+    .section-kicker button:hover {
+      color: var(--text-title);
+    }
+
+    /* Bio link rows (nổi bật & tập thơ) */
+    .bio-links-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .bio-link-row {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px 16px;
+      border-radius: 22px;
+      background: var(--pill-bg);
+      border: 1.4px solid var(--pill-border);
+      color: var(--text-title);
+      text-align: left;
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .bio-link-row:hover {
+      background: var(--pill-hover-bg);
+      border-color: var(--pill-hover-border);
+      transform: translateY(-2px);
+      box-shadow: var(--pill-hover-glow);
+    }
+
+    .bio-link-left {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .bio-link-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--text-title);
+    }
+
+    .bio-link-snippet {
+      font-family: var(--font-poem);
+      font-style: italic;
+      font-size: 0.86rem;
+      line-height: 1.5;
+      color: var(--text-sub);
+      margin-top: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .bio-link-arrow {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    /* Khối Lời nhắn gọn trong trang chủ */
+    .guestbook-card {
+      margin-top: 14px;
+      padding: 16px;
+      border-radius: 24px;
+      background: var(--glass-surface);
+      border: 1.2px solid var(--glass-border);
+    }
+
+    .guestbook-card h3 {
+      font-size: 0.96rem;
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+
+    .guestbook-card p {
+      font-size: 0.78rem;
+      color: var(--text-sub);
+      margin-bottom: 11px;
+    }
+
+    .input-glass {
+      width: 100%;
+      padding: 10px 13px;
+      border-radius: 15px;
+      border: 1.2px solid var(--glass-border);
+      background: var(--pill-bg);
+      color: var(--text-title);
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.25s ease, background 0.25s ease;
+    }
+
+    .input-glass::placeholder {
+      color: var(--text-muted);
+    }
+
+    .input-glass:focus {
+      border-color: var(--glass-border-highlight);
+      background: var(--pill-hover-bg);
+    }
+
+    textarea.input-glass {
+      resize: vertical;
+      min-height: 76px;
+      line-height: 1.55;
+    }
+
+    .form-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    /* ==========================================================================
+       TAB THƠ: TÌM KIẾM, THANH TẬP THƠ & DANH SÁCH BÀI THƠ
+       ========================================================================== */
+    .search-wrap {
+      position: relative;
       margin-bottom: 10px;
     }
 
-    .btn-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 9px 18px;
-      border-radius: var(--radius-pill);
-      font-size: 0.88rem;
-      font-weight: 500;
-      text-decoration: none;
-      cursor: pointer;
-      border: 1px solid var(--border-color);
-      background: var(--bg-secondary);
-      color: var(--text-primary);
-      transition: var(--transition);
-    }
-
-    .btn-pill:hover {
-      border-color: var(--accent);
-      transform: translateY(-1px);
-    }
-
-    .btn-pill.primary {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-    }
-
-    .btn-pill.primary:hover {
-      background: var(--accent-hover);
-    }
-
-    /* Thẻ giới thiệu thi gia - Chỉ hiển thị khi ấn vào */
-    .intro-drawer {
-      max-height: 0;
-      overflow: hidden;
-      opacity: 0;
-      transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease, margin 0.4s ease;
-      margin-top: 0;
-    }
-
-    .intro-drawer.open {
-      max-height: 750px;
-      opacity: 1;
-      margin-top: 20px;
-    }
-
-    .intro-card-inner {
-      text-align: left;
-      padding: 22px 24px;
-      border-radius: var(--radius-md);
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-    }
-
-    .intro-quote {
-      font-family: var(--font-serif);
-      font-size: 1.03rem;
-      line-height: 1.85;
-      color: var(--text-primary);
-      text-align: justify;
-    }
-
-    .intro-meta-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-top: 18px;
-      padding-top: 16px;
-      border-top: 1px dashed var(--border-color);
-      font-size: 0.88rem;
-    }
-
-    @media (max-width: 640px) {
-      .intro-meta-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .intro-meta-box h4 {
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--accent);
-      margin-bottom: 6px;
-    }
-
-    .milestone-list {
-      list-style: none;
-      color: var(--text-secondary);
-    }
-
-    .milestone-list li {
-      margin-bottom: 4px;
-    }
-
-    /* Tuyển tập nổi bật ở Home Tab */
-    .section-heading {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 16px;
-    }
-
-    .section-heading h2 {
-      font-family: var(--font-display);
-      font-size: 1.55rem;
-      font-weight: 600;
-    }
-
-    .featured-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 18px;
-      margin-bottom: 36px;
-    }
-
-    .featured-card {
-      padding: 20px;
-      border-radius: var(--radius-md);
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      box-shadow: var(--shadow-card);
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .featured-card:hover {
-      transform: translateY(-3px);
-      border-color: var(--accent);
-    }
-
-    .featured-verse {
-      font-family: var(--font-serif);
-      font-style: italic;
-      font-size: 1.02rem;
-      line-height: 1.7;
-      color: var(--text-primary);
-      margin-bottom: 14px;
-      padding-left: 12px;
-      border-left: 2px solid var(--accent);
-      white-space: pre-line;
-    }
-
-    .featured-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 0.82rem;
-      color: var(--text-secondary);
-    }
-
-    /* Form gửi lời nhắn cho thi gia */
-    .guestbook-box {
-      padding: 24px;
-      border-radius: var(--radius-lg);
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-    }
-
-    .guestbook-box h3 {
-      font-family: var(--font-display);
-      font-size: 1.4rem;
-      margin-bottom: 6px;
-    }
-
-    .guestbook-box p {
-      font-size: 0.88rem;
-      color: var(--text-secondary);
-      margin-bottom: 16px;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
-    @media (max-width: 600px) {
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .input-field {
-      width: 100%;
-      padding: 10px 14px;
-      border-radius: 12px;
-      border: 1px solid var(--border-color);
-      background: var(--bg-secondary);
-      color: var(--text-primary);
-      font-family: var(--font-sans);
-      font-size: 0.9rem;
-      outline: none;
-      transition: var(--transition);
-    }
-
-    .input-field:focus {
-      border-color: var(--accent);
-    }
-
-    textarea.input-field {
-      resize: vertical;
-      min-height: 86px;
-    }
-
-    /* ==========================================================================
-       5. TAB THƠ (PHÍA TRÁI: Thanh tab trượt, tìm kiếm, thẻ thơ, Spotify, tương tác)
-       ========================================================================== */
-    .search-filter-bar {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-
-    .search-input-wrap {
-      position: relative;
-      flex: 1;
-    }
-
-    .search-input-wrap input {
-      padding-left: 38px;
-    }
-
-    .search-icon {
+    .search-wrap i {
       position: absolute;
-      left: 13px;
+      left: 14px;
       top: 50%;
       transform: translateY(-50%);
       color: var(--text-muted);
+      font-size: 0.82rem;
       pointer-events: none;
     }
 
-    /* Thanh tab trượt ngang các tập thơ */
-    .collection-scroller-wrap {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 22px;
+    .search-wrap input {
+      padding-left: 36px;
     }
 
-    .collection-tabs {
+    .collection-scroller {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
       overflow-x: auto;
       scrollbar-width: none;
-      padding: 4px 2px;
-      flex: 1;
+      padding: 2px 0 12px;
     }
 
-    .collection-tabs::-webkit-scrollbar {
+    .collection-scroller::-webkit-scrollbar {
       display: none;
     }
 
     .col-chip {
       white-space: nowrap;
-      padding: 7px 16px;
-      border-radius: var(--radius-pill);
-      border: 1px solid var(--border-color);
-      background: var(--bg-card);
-      color: var(--text-secondary);
-      font-size: 0.85rem;
+      padding: 6px 13px;
+      border-radius: 999px;
+      border: 1.2px solid var(--glass-border);
+      background: var(--pill-bg);
+      color: var(--text-sub);
+      font-size: 0.78rem;
+      font-weight: 600;
       cursor: pointer;
-      transition: var(--transition);
+      transition: all 0.25s var(--spring-easing);
     }
 
-    .col-chip.active,
     .col-chip:hover {
+      color: var(--text-title);
+      border-color: var(--glass-border-highlight);
+    }
+
+    .col-chip.active {
       background: var(--accent);
-      color: #fff;
+      color: var(--accent-ink);
       border-color: var(--accent);
     }
 
-    /* Danh sách thẻ thơ */
-    .poem-feed {
+    .poem-feed-stack {
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      gap: 12px;
     }
 
-    .poem-card {
-      border-radius: var(--radius-lg);
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      box-shadow: var(--shadow-card);
+    .poem-item-card {
+      border-radius: 24px;
+      background: var(--pill-bg);
+      border: 1.3px solid var(--pill-border);
       overflow: hidden;
-      transition: var(--transition);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: border-color 0.25s ease, transform 0.25s var(--spring-easing);
     }
 
-    .poem-card:hover {
-      border-color: var(--accent);
+    .poem-item-card:hover {
+      border-color: var(--glass-border-highlight);
     }
 
-    .poem-card-cover {
+    .poem-cover-thumb {
       width: 100%;
-      height: 230px;
+      height: 152px;
       object-fit: cover;
       display: block;
       cursor: pointer;
+      opacity: 0.92;
     }
 
-    .poem-card-body {
-      padding: 20px 22px;
+    .poem-item-body {
+      padding: 15px 16px;
     }
 
-    .poem-card-header {
+    .poem-item-meta {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-
-    .author-mini {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .author-mini img {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 1px solid var(--border-color);
-    }
-
-    .author-mini-info {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .author-mini-name {
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-
-    .poem-time {
-      font-size: 0.77rem;
+      gap: 8px;
+      font-size: 0.72rem;
       color: var(--text-muted);
+      margin-bottom: 6px;
     }
 
-    .poem-badge {
-      font-size: 0.75rem;
-      padding: 4px 10px;
-      border-radius: var(--radius-pill);
+    .poem-col-tag {
+      padding: 2px 9px;
+      border-radius: 999px;
       background: var(--accent-soft);
-      color: var(--accent);
-      font-weight: 500;
+      color: var(--text-title);
+      font-weight: 600;
+      font-size: 0.7rem;
     }
 
-    .poem-card-title {
-      font-family: var(--font-display);
-      font-size: 1.65rem;
+    .poem-item-title {
+      font-size: 1.12rem;
       font-weight: 700;
-      margin-bottom: 10px;
+      letter-spacing: -0.015em;
+      color: var(--text-title);
+      margin-bottom: 8px;
       cursor: pointer;
-      transition: color 0.2s;
     }
 
-    .poem-card-title:hover {
+    .poem-item-title:hover {
       color: var(--accent);
     }
 
-    .poem-excerpt {
-      font-family: var(--font-serif);
-      font-size: 1.04rem;
-      line-height: 1.85;
-      color: var(--text-primary);
+    .poem-verse-preview {
+      font-family: var(--font-poem);
+      font-size: 0.98rem;
+      line-height: 1.72;
+      color: var(--text-quote);
       white-space: pre-line;
-      max-width: 62ch;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       cursor: pointer;
     }
 
-    /* Trình phát nhạc Spotify nhúng gọn trong thẻ thơ */
     .spotify-embed-box {
-      margin: 14px 0 16px;
-      border-radius: 12px;
+      margin: 8px 0 12px;
+      border-radius: 14px;
       overflow: hidden;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
+      border: 1px solid var(--glass-border);
+      background: var(--glass-surface);
     }
 
     .spotify-embed-box iframe {
@@ -684,925 +994,816 @@
       border: none;
     }
 
-    /* Thanh tương tác thẻ thơ: Thích, Yêu thích, Bình luận, Đọc chi tiết, Chia sẻ */
-    .poem-actions {
+    .poem-foot-bar {
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      padding-top: 14px;
-      border-top: 1px solid var(--border-color);
+      gap: 8px;
+      padding-top: 10px;
+      border-top: 1px solid var(--glass-border);
     }
 
-    .reaction-group {
+    .react-cluster {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
+      flex-wrap: wrap;
     }
 
-    .react-btn {
+    .react-pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
-      border-radius: var(--radius-pill);
-      border: 1px solid var(--border-color);
-      background: var(--bg-secondary);
-      color: var(--text-secondary);
-      font-size: 0.83rem;
+      gap: 5px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--glass-border);
+      background: var(--glass-surface);
+      color: var(--text-sub);
+      font-size: 0.74rem;
+      font-weight: 600;
       cursor: pointer;
-      transition: var(--transition);
+      transition: all 0.2s ease;
     }
 
-    .react-btn:hover,
-    .react-btn.active {
-      background: var(--accent-soft);
-      color: var(--accent);
-      border-color: var(--accent);
+    .react-pill:hover,
+    .react-pill.active {
+      color: var(--text-title);
+      border-color: var(--glass-border-highlight);
+      background: var(--pill-hover-bg);
+    }
+
+    .read-link-btn {
+      background: none;
+      border: none;
+      color: var(--text-sub);
+      font-size: 0.76rem;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 4px 2px;
+    }
+
+    .read-link-btn:hover {
+      color: var(--text-title);
     }
 
     /* ==========================================================================
-       6. MODAL ĐỌC THƠ CHI TIẾT & ZEN MODE + TẠO THẺ TRÍCH DẪN (QUOTE CARD)
+       TAB HỒ SƠ & STUDIO QUẢN TRỊ
        ========================================================================== */
-    .modal-overlay {
+    .glass-panel {
+      padding: 16px;
+      border-radius: 24px;
+      background: var(--glass-surface);
+      border: 1.2px solid var(--glass-border);
+      margin-bottom: 12px;
+    }
+
+    .glass-panel h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .glass-panel p.sub {
+      font-size: 0.78rem;
+      color: var(--text-sub);
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .social-auth-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .social-auth-btn {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 16px;
+      border: 1.2px solid var(--glass-border);
+      background: var(--pill-bg);
+      color: var(--text-title);
+      font-size: 0.84rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      cursor: pointer;
+      transition: all 0.22s ease;
+    }
+
+    .social-auth-btn:hover {
+      background: var(--pill-hover-bg);
+      border-color: var(--glass-border-highlight);
+    }
+
+    details.studio-block {
+      margin-bottom: 9px;
+      border-radius: 18px;
+      background: var(--pill-bg);
+      border: 1px solid var(--glass-border);
+      padding: 11px 13px;
+    }
+
+    details.studio-block summary {
+      cursor: pointer;
+      font-size: 0.83rem;
+      font-weight: 700;
+      color: var(--text-title);
+      list-style: none;
+    }
+
+    details.studio-block .studio-fields {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .studio-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      margin-bottom: 2px;
+      display: block;
+    }
+
+    .admin-poem-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 15px;
+      background: var(--pill-bg);
+      border: 1px solid var(--glass-border);
+      margin-bottom: 8px;
+    }
+
+    /* ==========================================================================
+       BOTTOM NAVIGATION DOCK (TRÁI: THƠ | GIỮA: TRANG CHỦ | PHẢI: HỒ SƠ)
+       ========================================================================== */
+    .bottom-nav-container {
+      position: fixed;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 28px);
+      max-width: 400px;
+      z-index: 40;
+      pointer-events: auto;
+    }
+
+    .ios26-nav-dock {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--dock-bg);
+      border: 1.5px solid var(--dock-border);
+      border-radius: 40px;
+      padding: 5px;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: inset 0 1.5px 2px rgba(255, 255, 255, 0.25), 0 16px 36px rgba(0, 0, 0, 0.35);
+    }
+
+    .nav-indicator-pill {
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      width: calc((100% - 10px) / 3);
+      height: calc(100% - 10px);
+      background: var(--indicator-bg);
+      border: 1.5px solid var(--indicator-border);
+      border-radius: 34px;
+      box-shadow: 0 0 14px rgba(255, 255, 255, 0.14), inset 0 1px 2px rgba(255, 255, 255, 0.65);
+      transition: transform 0.45s var(--spring-easing);
+      z-index: 1;
+    }
+
+    .nav-tab-btn {
+      flex: 1;
+      height: 44px;
+      border: none;
+      background: transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      position: relative;
+      z-index: 2;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+      transition: color 0.25s ease;
+    }
+
+    .nav-tab-btn.active {
+      color: var(--text-title);
+    }
+
+    /* ==========================================================================
+       MODALS (ĐỌC THƠ + ZEN MODE, SOẠN THƠ, QUOTE CARD, QR CODE, LỜI NHẮN)
+       ========================================================================== */
+    .modal-backdrop {
       position: fixed;
       inset: 0;
-      z-index: 1000;
-      background: rgba(12, 14, 18, 0.72);
+      background: rgba(0, 0, 0, 0.58);
       backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       display: none;
       align-items: center;
       justify-content: center;
       padding: 16px;
+      z-index: 100;
       overflow-y: auto;
     }
 
-    .modal-overlay.open {
+    .modal-backdrop.active {
       display: flex;
     }
 
-    .reader-modal {
+    .glass-modal-card {
       width: 100%;
-      max-width: 740px;
-      max-height: 92vh;
+      max-width: 540px;
+      max-height: 90vh;
       overflow-y: auto;
-      border-radius: var(--radius-lg);
-      background: var(--bg-primary);
-      border: 1px solid var(--border-color);
-      box-shadow: var(--shadow-soft);
-      padding: 28px 26px;
-      position: relative;
-      animation: fadeSlideUp 0.3s ease;
+      background: var(--modal-bg);
+      backdrop-filter: blur(24px) saturate(175%);
+      -webkit-backdrop-filter: blur(24px) saturate(175%);
+      border: 1.5px solid var(--glass-border-highlight);
+      border-radius: 32px;
+      padding: 22px 20px;
+      box-shadow: var(--glass-shadow);
+      color: var(--text-title);
+      animation: modalPop 0.32s var(--spring-easing);
     }
 
-    .reader-modal.zen-active {
+    .glass-modal-card.zen-mode {
       max-width: 100vw;
       width: 100vw;
       height: 100vh;
       max-height: 100vh;
       border-radius: 0;
-      padding: 40px 24px 80px;
+      padding: 32px 22px 64px;
     }
 
-    .reader-toolbar {
+    @keyframes modalPop {
+      from { opacity: 0; transform: scale(0.95) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal-top-bar {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      padding-bottom: 16px;
-      margin-bottom: 24px;
-      border-bottom: 1px solid var(--border-color);
+      gap: 8px;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--glass-border);
     }
 
-    .reader-poem-container {
-      max-width: 60ch;
+    .reader-paper {
+      max-width: 58ch;
       margin: 0 auto;
     }
 
-    .reader-title {
-      font-family: var(--font-display);
-      font-size: 2.1rem;
-      font-weight: 700;
+    .reader-poem-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
       line-height: 1.25;
-      margin-bottom: 8px;
-    }
-
-    .reader-meta {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-bottom: 22px;
-    }
-
-    .reader-cover {
-      width: 100%;
-      max-height: 300px;
-      object-fit: cover;
-      border-radius: var(--radius-md);
-      margin-bottom: 24px;
-    }
-
-    .reader-content {
-      font-family: var(--font-serif);
-      font-size: var(--poem-font-size);
-      line-height: 1.95;
-      white-space: pre-line;
-      color: var(--text-primary);
-      margin-bottom: 28px;
-    }
-
-    .author-note-box {
-      padding: 16px 18px;
-      border-radius: var(--radius-md);
-      background: var(--bg-secondary);
-      border-left: 3px solid var(--accent);
-      margin-bottom: 24px;
-      font-size: 0.92rem;
-      color: var(--text-secondary);
-    }
-
-    .comment-section {
-      margin-top: 26px;
-      padding-top: 20px;
-      border-top: 1px solid var(--border-color);
-    }
-
-    .comment-item {
-      padding: 12px 14px;
-      border-radius: 12px;
-      background: var(--bg-secondary);
-      margin-bottom: 10px;
-      font-size: 0.88rem;
-    }
-
-    .comment-item-head {
-      display: flex;
-      justify-content: space-between;
-      font-weight: 600;
-      margin-bottom: 4px;
-      font-size: 0.83rem;
-    }
-
-    /* Quote Card Preview */
-    .quote-card-preview {
-      padding: 32px 28px;
-      border-radius: var(--radius-lg);
-      background: linear-gradient(145deg, var(--bg-secondary), var(--bg-primary));
-      border: 1px solid var(--accent);
-      text-align: center;
-      margin: 16px 0;
-    }
-
-    .quote-card-text {
-      font-family: var(--font-serif);
-      font-style: italic;
-      font-size: 1.2rem;
-      line-height: 1.8;
-      white-space: pre-line;
-      margin-bottom: 16px;
-    }
-
-    /* ==========================================================================
-       7. TAB HỒ SƠ CÁ NHÂN (PHÍA PHẢI: Admin + User Social Login + Studio Quản Trị)
-       ========================================================================== */
-    .profile-card {
-      padding: 26px;
-      border-radius: var(--radius-lg);
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      box-shadow: var(--shadow-card);
-      margin-bottom: 22px;
-    }
-
-    .auth-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-
-    @media (max-width: 720px) {
-      .auth-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .auth-box {
-      padding: 22px;
-      border-radius: var(--radius-md);
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-    }
-
-    .auth-box h3 {
-      font-family: var(--font-display);
-      font-size: 1.35rem;
       margin-bottom: 6px;
     }
 
-    .social-login-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 14px;
+    .reader-poem-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 14px;
     }
 
-    .social-btn {
+    .reader-poem-img {
+      width: 100%;
+      max-height: 220px;
+      object-fit: cover;
+      border-radius: 18px;
+      margin-bottom: 16px;
+    }
+
+    .reader-poem-body {
+      font-family: var(--font-poem);
+      font-size: var(--poem-font-size);
+      line-height: 1.88;
+      color: var(--text-quote);
+      white-space: pre-line;
+      margin-bottom: 20px;
+    }
+
+    .reader-note-box {
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: var(--glass-surface);
+      border-left: 2.5px solid var(--accent);
+      font-size: 0.84rem;
+      color: var(--text-sub);
+      margin-bottom: 16px;
+    }
+
+    .comment-box {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--glass-border);
+    }
+
+    .comment-entry {
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: var(--glass-surface);
+      border: 1px solid var(--glass-border);
+      margin-bottom: 8px;
+      font-size: 0.83rem;
+    }
+
+    .qr-box-wrapper {
+      width: 176px;
+      height: 176px;
+      margin: 12px auto;
+      padding: 12px;
+      background: #ffffff;
+      border-radius: 24px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      width: 100%;
-      padding: 11px 16px;
-      border-radius: 12px;
-      border: 1px solid var(--border-color);
-      background: var(--bg-card);
-      color: var(--text-primary);
-      font-weight: 500;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: var(--transition);
     }
 
-    .social-btn:hover {
-      border-color: var(--accent);
-      transform: translateY(-1px);
+    .quote-preview-box {
+      padding: 24px 20px;
+      border-radius: 22px;
+      background: var(--glass-surface);
+      border: 1px solid var(--glass-border-highlight);
+      text-align: center;
+      margin: 10px 0 14px;
     }
 
-    .admin-panel {
-      margin-top: 24px;
-      padding: 24px;
-      border-radius: var(--radius-lg);
-      background: var(--bg-card);
-      border: 1px solid var(--accent);
-    }
-
-    .admin-poem-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 12px;
-      border-radius: 12px;
-      background: var(--bg-secondary);
+    .quote-preview-verse {
+      font-family: var(--font-poem);
+      font-style: italic;
+      font-size: 1.08rem;
+      line-height: 1.78;
+      white-space: pre-line;
+      color: var(--text-quote);
       margin-bottom: 10px;
     }
 
-    /* ==========================================================================
-       8. THANH ĐIỀU HƯỚNG DƯỚI CÙNG (3 TAB: THƠ TRÁI - HOME GIỮA - HỒ SƠ PHẢI)
-       ========================================================================== */
-    .bottom-nav {
-      position: fixed;
-      bottom: 16px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 200;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 14px;
-      border-radius: var(--radius-pill);
-      background: var(--bg-glass);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border: 1px solid var(--border-color);
-      box-shadow: var(--shadow-soft);
-    }
-
-    .nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 3px;
-      padding: 8px 22px;
-      border-radius: var(--radius-pill);
-      border: none;
-      background: transparent;
-      color: var(--text-secondary);
-      font-family: var(--font-sans);
-      font-size: 0.76rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .nav-item.center-home {
-      padding: 10px 26px;
-      background: var(--accent-soft);
-      color: var(--accent);
-    }
-
-    .nav-item.active {
-      background: var(--accent);
-      color: #fff;
-      box-shadow: 0 6px 16px rgba(140, 98, 73, 0.28);
-    }
-
-    .nav-item svg {
-      width: 20px;
-      height: 20px;
-    }
-
-    /* Toast thông báo */
     .toast {
       position: fixed;
-      top: 72px;
-      right: 20px;
-      z-index: 3000;
-      padding: 11px 18px;
-      border-radius: 12px;
-      background: var(--text-primary);
-      color: var(--bg-primary);
-      font-size: 0.85rem;
-      box-shadow: var(--shadow-soft);
+      top: 18px;
+      left: 50%;
+      transform: translate(-50%, -16px);
+      z-index: 200;
+      padding: 9px 16px;
+      border-radius: 999px;
+      background: var(--dock-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border-highlight);
+      color: var(--text-title);
+      font-size: 0.8rem;
+      font-weight: 600;
       opacity: 0;
-      transform: translateY(-10px);
       pointer-events: none;
-      transition: var(--transition);
+      transition: all 0.28s var(--spring-easing);
+      white-space: nowrap;
     }
 
     .toast.show {
       opacity: 1;
-      transform: translateY(0);
-    }
-
-    @media (max-width: 560px) {
-      .hide-mobile { display: none; }
-      .brand-title { font-size: 1.25rem; }
-    }
-
-    .qr-box-wrapper {
-      display: inline-flex;
-      padding: 16px;
-      background: #ffffff;
-      border-radius: 18px;
-      border: 1px solid var(--border-color);
-      box-shadow: var(--shadow-card);
-      margin: 14px auto;
+      transform: translate(-50%, 0);
     }
 
     .hidden {
       display: none !important;
     }
+
+    @media (max-width: 640px) {
+      .liquid-orb { filter: blur(14px); opacity: 0.65; }
+      .orb-primary { width: 280px; height: 280px; }
+      .orb-secondary { width: 250px; height: 250px; }
+      .orb-accent { width: 210px; height: 210px; }
+      .liquid-card-ios26 {
+        backdrop-filter: blur(14px) saturate(150%);
+        -webkit-backdrop-filter: blur(14px) saturate(150%);
+        border-radius: 34px;
+      }
+      .hide-xs { display: none; }
+    }
   </style>
 </head>
 <body>
-  <!-- Thanh tiến độ đọc -->
   <div class="reading-progress" id="readingProgress"></div>
-
-  <!-- Thông báo nhanh -->
   <div class="toast" id="toast"></div>
 
-  <!-- TOP BAR -->
-  <header class="top-bar">
-    <div class="top-bar-inner">
-      <div class="brand" onclick="switchTab('home')">
-        <span class="brand-title" id="topBrandTitle">Thiên Minh | w.poetry</span>
+  <!-- BACKGROUND ORBS & PARTICLES -->
+  <div class="ios26-bg-canvas">
+    <div class="liquid-orb orb-primary"></div>
+    <div class="liquid-orb orb-secondary"></div>
+    <div class="liquid-orb orb-accent"></div>
+    <canvas id="ambient-particles"></canvas>
+  </div>
+  <div class="glass-mesh-overlay"></div>
+
+  <!-- BIO-LINK CARD -->
+  <main class="liquid-card-ios26" id="main-card">
+    <div class="card-border-glow"></div>
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <div class="theme-toggle-track" id="theme-toggle" role="button" tabindex="0" aria-label="Chuyển chế độ Sáng/Tối">
+          <div class="theme-orb-indicator">
+            <i class="fa-solid fa-moon orb-icon icon-moon"></i>
+            <i class="fa-solid fa-sun orb-icon icon-sun"></i>
+          </div>
+        </div>
+        <div class="realtime-clock-wrap" title="Giờ đồng bộ thiết bị & trạng thái dữ liệu">
+          <span class="sync-dot" id="syncStatusDot"></span>
+          <span id="realtime-clock">--:--</span>
+        </div>
       </div>
 
-      <div class="top-controls">
-        <button class="theme-btn" onclick="copyWebLink()" title="Sao chép liên kết Thiên Minh | w.poetry">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-          </svg>
-          <span class="hide-mobile">Copy link</span>
+      <div class="top-bar-controls">
+        <button class="glass-btn-ios26" onclick="openGuestbookModal()" aria-label="Gửi lời nhắn" title="Gửi lời nhắn">
+          <i class="fa-regular fa-envelope"></i>
         </button>
-        <button class="theme-btn" onclick="openQrModal()" title="Hiển thị mã QR trang web">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="7" height="7"></rect>
-            <rect x="14" y="3" width="7" height="7"></rect>
-            <rect x="3" y="14" width="7" height="7"></rect>
-            <path d="M14 14h3v3h-3zM18 18h3v3h-3zM14 20h2M20 14v2"></path>
-          </svg>
-          <span class="hide-mobile">QR</span>
+        <button class="glass-btn-ios26" onclick="copyWebLink()" aria-label="Sao chép liên kết" title="Sao chép liên kết">
+          <i class="fa-regular fa-copy"></i>
         </button>
-        <div class="clock-pill" title="Giờ đồng bộ thiết bị & trạng thái lưu trữ">
-          <span class="sync-dot" id="syncStatusDot"></span>
-          <span id="deviceClock">--:--</span>
-        </div>
-        <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Chuyển chế độ Sáng / Tối (Tự động theo giờ)">
-          <span id="themeIcon">☀️</span>
-          <span id="themeLabel" class="hide-mobile">Ban ngày</span>
+        <button class="glass-btn-ios26" onclick="openQrModal()" aria-label="Mã QR" title="Mã QR">
+          <i class="fa-solid fa-qrcode"></i>
         </button>
       </div>
     </div>
-  </header>
 
-  <!-- NỘI DUNG CHÍNH 3 TAB -->
-  <main class="container">
-    <!-- ======================================================================
-         TAB 1 (TRÁI): TAB THƠ (Thanh trượt tập thơ, tìm kiếm, thẻ thơ, Spotify)
-         ====================================================================== -->
-    <section id="tab-poetry" class="tab-view">
-      <div class="search-filter-bar">
-        <div class="search-input-wrap">
-          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-          <input type="text" id="poemSearchInput" class="input-field" placeholder="Tìm tên bài thơ, câu thơ, thể loại..." oninput="renderPoetryFeed()" />
+    <!-- BIO PROFILE HEADER -->
+    <header class="bio-header">
+      <div class="avatar-breathe-wrap">
+        <div class="avatar-ring" onclick="switchTab('home')" title="Nhật Huy — Thiên Minh">
+          <img id="heroAvatar" src="" alt="Nhật Huy - Thiên Minh" />
         </div>
       </div>
 
-      <!-- Thanh tab trượt phía trên: Tất cả, tập thơ... (Admin có thể thêm/bớt) -->
-      <div class="collection-scroller-wrap">
-        <div class="collection-tabs" id="collectionTabs"></div>
-        <button id="manageCollectionsBtn" class="btn-pill hidden" onclick="promptAddCollection()" title="Thêm tập thơ mới">+ Tập</button>
+      <h1 class="bio-name" id="heroName">Nhật Huy</h1>
+      <div class="bio-penname" id="heroPenName">Thiên Minh · w.poetry</div>
+
+      <div class="bio-subline" id="heroMetaLinks">
+        <a id="heroBioLink" href="https://nhztwiie.github.io/w" target="_blank" rel="noopener noreferrer">Nhật Huy | w.bio</a>
       </div>
 
-      <!-- Danh sách thẻ thơ -->
-      <div class="poem-feed" id="poemFeed"></div>
-    </section>
+      <div class="bio-quick-row">
+        <button class="pill-action accent" onclick="switchTab('poetry')">
+          <i class="fa-solid fa-feather-pointed"></i>
+          <span>Đọc thơ</span>
+        </button>
+        <button class="pill-action" id="toggleIntroBtn" onclick="toggleIntroCard()">
+          <i class="fa-regular fa-user"></i>
+          <span id="toggleIntroText">Đôi nét</span>
+        </button>
+        <button class="pill-action" onclick="openQrModal()">
+          <i class="fa-solid fa-qrcode"></i>
+          <span>QR</span>
+        </button>
+      </div>
 
-    <!-- ======================================================================
-         TAB 2 (GIỮA): HOME TAB (AVT, Nhật Huy, Thiên Minh, Thẻ giới thiệu ấn mở, w.bio)
-         ====================================================================== -->
-    <section id="tab-home" class="tab-view active">
-      <div class="poet-hero">
-        <div class="poet-avatar-wrap">
-          <img id="heroAvatar" class="poet-avatar" src="" alt="Nhật Huy - Thiên Minh" />
+      <!-- Thẻ giới thiệu thi gia (chỉ mở khi bấm) -->
+      <div class="intro-drawer" id="introDrawer">
+        <div class="intro-panel">
+          <p id="heroIntroText"></p>
+          <div class="intro-meta-sep">
+            <div id="heroPhilosophy"></div>
+            <div id="heroMilestones"></div>
+            <div id="heroSocialLinks" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:2px;"></div>
+          </div>
         </div>
-        <h1 class="poet-name" id="heroName">Nhật Huy</h1>
-        <p class="poet-penname" id="heroPenName">Bút danh: Thiên Minh</p>
+      </div>
+    </header>
 
-        <div class="hero-actions">
-          <button class="btn-pill primary" id="toggleIntroBtn" onclick="toggleIntroCard()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 20h9"></path>
-              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-            </svg>
-            <span id="toggleIntroText">Lời ngỏ thi gia</span>
-          </button>
+    <!-- NỘI DUNG 3 TAB -->
+    <div class="content-body">
+      <!-- TAB GIỮA (MẶC ĐỊNH): TRANG CHỦ BIO LINK -->
+      <section id="tab-home" class="tab-page active-tab">
+        <div class="section-kicker">
+          <span id="featuredSectionHeading">Tuyển tập nổi bật</span>
+          <button onclick="switchTab('poetry')">Tất cả thơ →</button>
+        </div>
+        <div class="bio-links-stack" id="featuredList"></div>
 
-          <a id="heroBioLink" class="btn-pill" href="https://nhztwiie.github.io/w" target="_blank" rel="noopener noreferrer">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-            </svg>
-            <span id="heroBioLabel">Nhật Huy | w.bio</span>
-          </a>
+        <div class="section-kicker">
+          <span>Tập thơ</span>
+          <button onclick="switchTab('poetry')">Mở tab thơ →</button>
+        </div>
+        <div class="bio-links-stack" id="homeCollectionsList"></div>
 
-          <button class="btn-pill" onclick="copyWebLink()" title="Sao chép link trang thơ">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-            </svg>
-            <span>Sao chép link</span>
-          </button>
+        <div class="guestbook-card">
+          <h3 id="guestbookSectionTitle">Gửi lời nhắn cho Thiên Minh</h3>
+          <p id="guestbookSectionSubtitle">Một vài dòng cảm nhận hoặc lời chào dịu dàng gửi đến góc viết của Nhật Huy.</p>
+          <form class="form-stack" id="guestbookForm" onsubmit="handleGuestbookSubmit(event)">
+            <input type="text" id="msgSenderName" class="input-glass" placeholder="Tên hoặc bút danh của bạn..." required />
+            <input type="email" id="msgSenderEmail" class="input-glass" placeholder="Email (không bắt buộc)" />
+            <textarea id="msgContent" class="input-glass" placeholder="Viết lời nhắn..." required></textarea>
+            <button type="submit" class="pill-action accent" style="justify-content:center; padding:9px 16px;">Gửi lời nhắn</button>
+          </form>
+        </div>
+      </section>
 
-          <button class="btn-pill" onclick="openQrModal()" title="Mã QR trang thơ">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="7" height="7"></rect>
-              <rect x="14" y="3" width="7" height="7"></rect>
-              <rect x="3" y="14" width="7" height="7"></rect>
-              <path d="M14 14h3v3h-3zM18 18h3v3h-3z"></path>
-            </svg>
-            <span>Mã QR</span>
-          </button>
+      <!-- TAB TRÁI: THƠ -->
+      <section id="tab-poetry" class="tab-page">
+        <div class="search-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="poemSearchInput" class="input-glass" placeholder="Tìm nhan đề, câu thơ, thể loại..." oninput="renderPoetryFeed()" />
         </div>
 
-        <!-- Thẻ giới thiệu thi gia - Chỉ hiển thị đoạn giới thiệu khi ấn vào -->
-        <div class="intro-drawer" id="introDrawer">
-          <div class="intro-card-inner">
-            <p class="intro-quote" id="heroIntroText"></p>
+        <div class="collection-scroller" id="collectionTabs"></div>
+        <div class="poem-feed-stack" id="poemFeed"></div>
+      </section>
 
-            <div class="intro-meta-grid">
-              <div class="intro-meta-box">
-                <h4>Triết lý sáng tác</h4>
-                <p id="heroPhilosophy" style="color: var(--text-secondary);"></p>
+      <!-- TAB PHẢI: HỒ SƠ & STUDIO -->
+      <section id="tab-profile" class="tab-page">
+        <div id="authContainer" class="glass-panel">
+          <h3>Hồ sơ cá nhân</h3>
+          <p class="sub">Đăng nhập để lưu cảm xúc yêu thích, cập nhật hồ sơ hoặc vào studio quản trị.</p>
+
+          <div class="social-auth-stack">
+            <button class="social-auth-btn" onclick="loginWithProvider('Google')">
+              <i class="fa-brands fa-google"></i>
+              <span>Tiếp tục với Google</span>
+            </button>
+            <button class="social-auth-btn" onclick="loginWithProvider('Zalo')">
+              <i class="fa-solid fa-comment-dots"></i>
+              <span>Tiếp tục với Zalo</span>
+            </button>
+            <button class="social-auth-btn" onclick="loginWithProvider('Facebook')">
+              <i class="fa-brands fa-facebook-f"></i>
+              <span>Tiếp tục với Facebook</span>
+            </button>
+          </div>
+
+          <form class="form-stack" onsubmit="handleAdminLogin(event)" style="padding-top:12px; border-top:1px solid var(--glass-border);">
+            <span class="studio-label">Đăng nhập Quản trị viên</span>
+            <input type="email" id="adminEmailInput" class="input-glass" placeholder="Email quản trị" required />
+            <input type="password" id="adminPwdInput" class="input-glass" placeholder="Mật khẩu" required />
+            <button type="submit" class="pill-action accent" style="justify-content:center; padding:9px 14px;">Đăng nhập Admin</button>
+          </form>
+        </div>
+
+        <div id="loggedInContainer" class="hidden">
+          <div class="glass-panel">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px;">
+              <div style="display:flex; align-items:center; gap:11px; min-width:0;">
+                <img id="userProfileAvatar" src="" alt="Avatar" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:1.5px solid var(--glass-border-highlight); flex-shrink:0;" />
+                <div style="min-width:0;">
+                  <div id="userProfileName" style="font-weight:700; font-size:0.98rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
+                  <div id="userProfileBadge" style="font-size:0.74rem; color:var(--text-sub);"></div>
+                </div>
               </div>
-              <div class="intro-meta-box">
-                <h4>Dấu ấn & Kênh kết nối</h4>
-                <ul class="milestone-list" id="heroMilestones"></ul>
-                <div id="heroSocialLinks" style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 8px;"></div>
+              <button class="pill-action" onclick="logoutUser()">Đăng xuất</button>
+            </div>
+
+            <div class="form-stack">
+              <input type="text" id="editProfileName" class="input-glass" placeholder="Tên hiển thị" />
+              <input type="text" id="editProfileAvatar" class="input-glass" placeholder="Link ảnh đại diện" />
+              <div style="display:flex; gap:8px; justify-content:space-between; flex-wrap:wrap;">
+                <label class="pill-action">
+                  <i class="fa-regular fa-image"></i> Tải ảnh
+                  <input type="file" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)" />
+                </label>
+                <button class="pill-action accent" onclick="saveProfileChanges()">Lưu hồ sơ</button>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Tuyển tập nổi bật (3-5 bài tiêu biểu kèm cặp câu mở màn) -->
-      <div class="section-heading">
-        <h2 id="featuredSectionHeading">Tuyển tập nổi bật</h2>
-        <button class="btn-pill" onclick="switchTab('poetry')">Xem tất cả thơ →</button>
-      </div>
-      <div class="featured-grid" id="featuredGrid"></div>
-
-      <!-- Form gửi lời nhắn / cảm nhận cho tác giả (Hỗ trợ EmailJS) -->
-      <div class="guestbook-box">
-        <h3 id="guestbookSectionTitle">Gửi lời nhắn cho Thiên Minh</h3>
-        <p id="guestbookSectionSubtitle">Một vài dòng cảm nhận hoặc lời chào dịu dàng gửi đến góc viết của Nhật Huy.</p>
-        <form id="guestbookForm" onsubmit="handleGuestbookSubmit(event)">
-          <div class="form-row">
-            <input type="text" id="msgSenderName" class="input-field" placeholder="Tên hoặc bút danh của bạn..." required />
-            <input type="email" id="msgSenderEmail" class="input-field" placeholder="Email của bạn (không bắt buộc)" />
-          </div>
-          <textarea id="msgContent" class="input-field" placeholder="Viết lời nhắn của bạn tại đây..." required></textarea>
-          <div style="margin-top: 12px; display: flex; justify-content: flex-end;">
-            <button type="submit" class="btn-pill primary">Gửi lời nhắn</button>
-          </div>
-        </form>
-      </div>
-    </section>
-
-    <!-- ======================================================================
-         TAB 3 (PHẢI): TAB HỒ SƠ CÁ NHÂN (Admin + User Google/Zalo/Facebook + Firebase)
-         ====================================================================== -->
-    <section id="tab-profile" class="tab-view">
-      <!-- Khu vực đăng nhập (Hiển thị khi chưa đăng nhập) -->
-      <div id="authContainer" class="profile-card">
-        <h2 style="font-family: var(--font-display); font-size: 1.7rem; margin-bottom: 6px;">Không gian cá nhân</h2>
-        <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 20px;">
-          Đăng nhập để lưu trạng thái yêu thích, tùy chỉnh hồ sơ và đồng bộ dữ liệu xuyên suốt các lần truy cập.
-        </p>
-
-        <div class="auth-grid">
-          <!-- Cột 1: Độc giả đăng nhập bằng Google, Zalo, Facebook -->
-          <div class="auth-box">
-            <h3>Dành cho Độc giả</h3>
-            <p style="font-size: 0.83rem; color: var(--text-secondary);">
-              Kết nối nhanh và lưu thông tin cho những lần ghé thăm sau.
-            </p>
-            <div class="social-login-stack">
-              <button class="social-btn" onclick="loginWithProvider('Google')">
-                <!-- Icon Google -->
-                <svg width="18" height="18" viewBox="0 0 24 24">
-                  <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.8C6.2 7.2 8.9 5 12 5z"/>
-                  <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.5H12v4.8h6.5c-.3 1.5-1.1 2.8-2.4 3.6l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/>
-                  <path fill="#FBBC05" d="M5.3 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.6 7.4C.6 9.4 0 11.6 0 14s.6 4.6 1.6 6.6l3.7-2.8z"/>
-                  <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.1 0-5.8-2.1-6.7-5l-3.7 2.8C3.5 20.4 7.4 23 12 23z"/>
-                </svg>
-                <span>Tiếp tục với Google</span>
-              </button>
-
-              <button class="social-btn" onclick="loginWithProvider('Zalo')">
-                <!-- Icon Zalo -->
-                <svg width="18" height="18" viewBox="0 0 24 24">
-                  <rect width="24" height="24" rx="6" fill="#0068FF"/>
-                  <text x="12" y="15.5" text-anchor="middle" fill="#FFFFFF" font-size="8.5" font-weight="bold" font-family="sans-serif">Zalo</text>
-                </svg>
-                <span>Tiếp tục với Zalo</span>
-              </button>
-
-              <button class="social-btn" onclick="loginWithProvider('Facebook')">
-                <!-- Icon Facebook -->
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="#1877F2">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                </svg>
-                <span>Tiếp tục với Facebook</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Cột 2: Quản trị viên (Admin) -->
-          <div class="auth-box">
-            <h3>Quản trị viên (Thi gia)</h3>
-            <p style="font-size: 0.83rem; color: var(--text-secondary); margin-bottom: 12px;">
-              Đăng nhập để quản lý tập thơ, đăng bài, chèn nhạc Spotify và đồng bộ Firebase.
-            </p>
-            <form onsubmit="handleAdminLogin(event)" style="display: flex; flex-direction: column; gap: 10px;">
-              <input type="email" id="adminEmailInput" class="input-field" placeholder="Email quản trị" required />
-              <input type="password" id="adminPwdInput" class="input-field" placeholder="Mật khẩu" required />
-              <button type="submit" class="btn-pill primary" style="justify-content: center;">Đăng nhập Admin</button>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      <!-- Khu vực Hồ sơ đã đăng nhập (Lưu tự động cho lần sau) -->
-      <div id="loggedInContainer" class="hidden">
-        <div class="profile-card">
-          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 20px;">
-            <div style="display: flex; align-items: center; gap: 14px;">
-              <img id="userProfileAvatar" src="" alt="Avatar" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent);" />
+          <!-- STUDIO ADMIN -->
+          <div id="adminStudio" class="glass-panel hidden">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px;">
               <div>
-                <h2 id="userProfileName" style="font-family: var(--font-display); font-size: 1.5rem;"></h2>
-                <span id="userProfileBadge" class="poem-badge"></span>
+                <h3>Studio Thi Gia</h3>
+                <p class="sub" id="firebaseStatusText" style="margin-bottom:0;">Đồng bộ dữ liệu thơ và hồ sơ.</p>
               </div>
+              <button class="pill-action accent" onclick="openPoemEditor()">+ Đăng thơ</button>
             </div>
-            <button class="btn-pill" onclick="logoutUser()">Đăng xuất</button>
-          </div>
 
-          <!-- Tùy chỉnh thông tin hồ sơ -->
-          <h4 style="margin-bottom: 10px; font-size: 0.92rem;">Tùy chỉnh hồ sơ cá nhân</h4>
-          <div class="form-row">
-            <input type="text" id="editProfileName" class="input-field" placeholder="Tên hiển thị" />
-            <input type="text" id="editProfileAvatar" class="input-field" placeholder="Link ảnh đại diện (URL hoặc tải ảnh bên dưới)" />
-          </div>
-          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-top: 8px;">
-            <label class="btn-pill" style="font-size: 0.82rem;">
-              📷 Tải ảnh đại diện từ máy
-              <input type="file" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)" />
-            </label>
-            <button class="btn-pill primary" onclick="saveProfileChanges()">Lưu thay đổi hồ sơ</button>
-          </div>
-        </div>
-
-        <!-- BẢNG ĐIỀU KHIỂN ADMIN TOÀN DIỆN (Sửa mọi thông tin trên web & đồng bộ Firebase) -->
-        <div id="adminStudio" class="admin-panel hidden">
-          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 16px;">
-            <div>
-              <h2 style="font-family: var(--font-display); font-size: 1.6rem;">Studio Thi Gia & Quản Trị Toàn Diện</h2>
-              <p style="font-size: 0.83rem; color: var(--text-secondary);" id="firebaseStatusText">
-                Trạng thái: Sẵn sàng đồng bộ dữ liệu lên người dùng.
-              </p>
-            </div>
-            <button class="btn-pill primary" onclick="openPoemEditor()">+ Đăng bài thơ mới</button>
-          </div>
-
-          <!-- 1. Cấu hình chung trang web (Tên web, Link QR/Share, Tiêu đề các mục) -->
-          <details style="margin-bottom: 14px; background: var(--bg-secondary); padding: 14px; border-radius: 12px;">
-            <summary style="cursor: pointer; font-weight: 600; font-size: 0.92rem;">1. Cài đặt chung Trang web, Link chia sẻ & Tiêu đề mục</summary>
-            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
-              <div class="form-row" style="margin-bottom:0;">
-                <div>
-                  <label style="font-size:0.78rem; color:var(--text-secondary);">Tên trang web (Top Bar & QR)</label>
-                  <input type="text" id="adminEditSiteTitle" class="input-field" placeholder="VD: Thiên Minh | w.poetry" />
-                </div>
-                <div>
-                  <label style="font-size:0.78rem; color:var(--text-secondary);">Link cố định cho Copy & QR (Để trống = tự động)</label>
-                  <input type="url" id="adminEditShareUrl" class="input-field" placeholder="https://..." />
-                </div>
+            <details class="studio-block">
+              <summary>1. Cài đặt chung & Liên kết</summary>
+              <div class="studio-fields">
+                <span class="studio-label">Tiêu đề trang</span>
+                <input type="text" id="adminEditSiteTitle" class="input-glass" />
+                <span class="studio-label">Link chia sẻ / QR (để trống = tự động)</span>
+                <input type="url" id="adminEditShareUrl" class="input-glass" />
+                <span class="studio-label">Tiêu đề Tuyển tập nổi bật</span>
+                <input type="text" id="adminEditFeaturedHeading" class="input-glass" />
+                <span class="studio-label">Tiêu đề & mô tả khung lời nhắn</span>
+                <input type="text" id="adminEditGuestbookTitle" class="input-glass" />
+                <input type="text" id="adminEditGuestbookSubtitle" class="input-glass" />
+                <button class="pill-action accent" style="align-self:flex-end;" onclick="saveSiteGeneralInfo()">Lưu cài đặt</button>
               </div>
-              <div class="form-row" style="margin-bottom:0;">
-                <div>
-                  <label style="font-size:0.78rem; color:var(--text-secondary);">Tiêu đề mục Tuyển tập ở Trang chủ</label>
-                  <input type="text" id="adminEditFeaturedHeading" class="input-field" placeholder="Tuyển tập nổi bật" />
-                </div>
-                <div>
-                  <label style="font-size:0.78rem; color:var(--text-secondary);">Tiêu đề khung Gửi lời nhắn</label>
-                  <input type="text" id="adminEditGuestbookTitle" class="input-field" placeholder="Gửi lời nhắn cho Thiên Minh" />
-                </div>
-              </div>
-              <div>
-                <label style="font-size:0.78rem; color:var(--text-secondary);">Mô tả dưới khung Gửi lời nhắn</label>
-                <input type="text" id="adminEditGuestbookSubtitle" class="input-field" />
-              </div>
-              <button class="btn-pill primary" style="align-self: flex-end;" onclick="saveSiteGeneralInfo()">Lưu cài đặt trang web</button>
-            </div>
-          </details>
+            </details>
 
-          <!-- 2. Chỉnh sửa toàn bộ thông tin Thi gia trên Home Tab -->
-          <details style="margin-bottom: 14px; background: var(--bg-secondary); padding: 14px; border-radius: 12px;">
-            <summary style="cursor: pointer; font-weight: 600; font-size: 0.92rem;">2. Chỉnh sửa đầy đủ thông tin Thi gia (Home Tab)</summary>
-            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
-              <div class="form-row" style="margin-bottom:0;">
-                <div>
-                  <label style="font-size:0.78rem; color:var(--text-secondary);">Tên tác giả</label>
-                  <input type="text" id="adminEditAuthorName" class="input-field" placeholder="Nhật Huy" />
-                </div>
-                <div>
-                  <label style="font-size:0.78rem; color:var(--text-secondary);">Bút danh</label>
-                  <input type="text" id="adminEditPenName" class="input-field" placeholder="Thiên Minh" />
-                </div>
-              </div>
-
-              <div class="form-row" style="margin-bottom:0; align-items:end;">
-                <div>
-                  <label style="font-size:0.78rem; color:var(--text-secondary);">Link Avatar tác giả</label>
-                  <input type="text" id="adminEditAuthorAvatar" class="input-field" placeholder="URL ảnh đại diện" />
-                </div>
-                <label class="btn-pill" style="justify-content: center; height: 41px;">
-                  🖼️ Tải ảnh Avatar mới
+            <details class="studio-block">
+              <summary>2. Thông tin Thi gia</summary>
+              <div class="studio-fields">
+                <span class="studio-label">Tên & bút danh</span>
+                <input type="text" id="adminEditAuthorName" class="input-glass" placeholder="Tên tác giả" />
+                <input type="text" id="adminEditPenName" class="input-glass" placeholder="Bút danh" />
+                <span class="studio-label">Ảnh đại diện</span>
+                <input type="text" id="adminEditAuthorAvatar" class="input-glass" placeholder="URL ảnh" />
+                <label class="pill-action" style="align-self:flex-start;">
+                  <i class="fa-regular fa-image"></i> Tải ảnh tác giả
                   <input type="file" accept="image/*" class="hidden" onchange="handleAdminAuthorAvatarUpload(event)" />
                 </label>
+                <span class="studio-label">Liên kết bio chính</span>
+                <input type="text" id="adminEditBioLabel" class="input-glass" placeholder="Nhãn hiển thị" />
+                <input type="url" id="adminEditBioUrl" class="input-glass" placeholder="https://..." />
+                <span class="studio-label">Đoạn tự sự</span>
+                <textarea id="adminEditIntro" class="input-glass" rows="3"></textarea>
+                <span class="studio-label">Triết lý sáng tác</span>
+                <textarea id="adminEditPhilosophy" class="input-glass" rows="2"></textarea>
+                <span class="studio-label">Dấu ấn (mỗi dòng: Năm | Nội dung)</span>
+                <textarea id="adminEditMilestones" class="input-glass" rows="3"></textarea>
+                <span class="studio-label">Kênh kết nối (mỗi dòng: Nhãn | URL)</span>
+                <textarea id="adminEditSocials" class="input-glass" rows="3"></textarea>
+                <button class="pill-action accent" style="align-self:flex-end;" onclick="saveAuthorHomeInfo()">Cập nhật thi gia</button>
               </div>
+            </details>
 
-              <div class="form-row" style="margin-bottom:0;">
-                <div>
-                  <label style="font-size:0.78rem; color:var(--text-secondary);">Nhãn nút Bio</label>
-                  <input type="text" id="adminEditBioLabel" class="input-field" placeholder="Nhật Huy | w.bio" />
+            <details class="studio-block">
+              <summary>3. Tập thơ</summary>
+              <div class="studio-fields">
+                <div id="adminCollectionList" style="display:flex; flex-direction:column; gap:6px;"></div>
+                <div style="display:flex; gap:6px; margin-top:4px;">
+                  <input type="text" id="newCollectionName" class="input-glass" placeholder="Tên tập thơ mới..." />
+                  <button class="pill-action accent" onclick="addCollectionFromAdmin()">Thêm</button>
                 </div>
-                <div>
-                  <label style="font-size:0.78rem; color:var(--text-secondary);">Đường dẫn w.bio chính thức</label>
-                  <input type="url" id="adminEditBioUrl" class="input-field" placeholder="https://nhztwiie.github.io/w" />
-                </div>
               </div>
+            </details>
 
-              <div>
-                <label style="font-size:0.78rem; color:var(--text-secondary);">Đoạn tự sự giới thiệu bút danh (Hiện khi bấm Lời ngỏ thi gia)</label>
-                <textarea id="adminEditIntro" class="input-field" rows="4"></textarea>
+            <details class="studio-block">
+              <summary>4. Tài khoản Admin</summary>
+              <div class="studio-fields">
+                <input type="email" id="adminEditLoginEmail" class="input-glass" placeholder="Email Admin" />
+                <input type="text" id="adminEditLoginPwd" class="input-glass" placeholder="Mật khẩu mới" />
+                <button class="pill-action accent" style="align-self:flex-end;" onclick="saveAdminCredentials()">Cập nhật tài khoản</button>
               </div>
+            </details>
 
-              <div>
-                <label style="font-size:0.78rem; color:var(--text-secondary);">Triết lý sáng tác</label>
-                <textarea id="adminEditPhilosophy" class="input-field" rows="2"></textarea>
-              </div>
-
-              <div>
-                <label style="font-size:0.78rem; color:var(--text-secondary);">Dấu ấn sáng tác (Mỗi dòng dạng: Năm | Nội dung)</label>
-                <textarea id="adminEditMilestones" class="input-field" rows="3" placeholder="2024 | Khởi nguồn những trang viết..."></textarea>
-              </div>
-
-              <div>
-                <label style="font-size:0.78rem; color:var(--text-secondary);">Các kênh kết nối / Mạng xã hội (Mỗi dòng dạng: Tên nhãn | Đường dẫn URL)</label>
-                <textarea id="adminEditSocials" class="input-field" rows="3" placeholder="w.bio Chính Thức | https://nhztwiie.github.io/w"></textarea>
-              </div>
-
-              <button class="btn-pill primary" style="align-self: flex-end;" onclick="saveAuthorHomeInfo()">Cập nhật & Đồng bộ Home Tab</button>
+            <div class="section-kicker" style="margin-top:14px;">
+              <span>Danh sách tác phẩm</span>
             </div>
-          </details>
-
-          <!-- 3. Quản lý Tập thơ (Thêm / Sửa tên / Xóa tab trượt) -->
-          <details style="margin-bottom: 14px; background: var(--bg-secondary); padding: 14px; border-radius: 12px;">
-            <summary style="cursor: pointer; font-weight: 600; font-size: 0.92rem;">3. Quản lý Tập thơ (Thêm / Đổi tên / Xóa tab trượt)</summary>
-            <div id="adminCollectionList" style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;"></div>
-            <div style="display: flex; gap: 8px; margin-top: 12px;">
-              <input type="text" id="newCollectionName" class="input-field" placeholder="Tên tập thơ mới (VD: Tập: Mưa Tháng Bảy)" />
-              <button class="btn-pill primary" onclick="addCollectionFromAdmin()">+ Thêm</button>
-            </div>
-          </details>
-
-          <!-- 4. Bảo mật tài khoản Admin -->
-          <details style="margin-bottom: 18px; background: var(--bg-secondary); padding: 14px; border-radius: 12px;">
-            <summary style="cursor: pointer; font-weight: 600; font-size: 0.92rem;">4. Đổi Email & Mật khẩu đăng nhập Admin</summary>
-            <div class="form-row" style="margin-top: 12px; margin-bottom: 8px;">
-              <input type="email" id="adminEditLoginEmail" class="input-field" placeholder="Email đăng nhập Admin" />
-              <input type="text" id="adminEditLoginPwd" class="input-field" placeholder="Mật khẩu mới" />
-            </div>
-            <div style="display: flex; justify-content: flex-end;">
-              <button class="btn-pill primary" onclick="saveAdminCredentials()">Cập nhật tài khoản Admin</button>
-            </div>
-          </details>
-
-          <!-- 5. Danh sách tác phẩm để chỉnh sửa / xóa / quản lý bình luận -->
-          <h4 style="margin-bottom: 10px; font-size: 0.92rem;">5. Danh sách tác phẩm & Quản lý bình luận</h4>
-          <div id="adminPoemList"></div>
+            <div id="adminPoemList"></div>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   </main>
 
-  <!-- ========================================================================
-       MODAL ĐỌC BÀI THƠ CHI TIẾT (ZEN MODE, CỠ CHỮ, BÀI TRƯỚC/SAU, QUOTE CARD)
-       ======================================================================== -->
-  <div class="modal-overlay" id="readerModalOverlay" onclick="closeReaderOnOutside(event)">
-    <div class="reader-modal" id="readerModalBox">
-      <div class="reader-toolbar">
-        <div style="display: flex; gap: 8px; align-items: center;">
-          <button class="btn-pill" onclick="toggleZenMode()" id="zenModeBtn">🧘 Zen Mode</button>
-          <button class="btn-pill" onclick="changePoemFontSize(-0.08)" title="Giảm cỡ chữ">A-</button>
-          <button class="btn-pill" onclick="changePoemFontSize(0.08)" title="Tăng cỡ chữ">A+</button>
+  <!-- BOTTOM DOCK: TRÁI (THƠ) - GIỮA (TRANG CHỦ) - PHẢI (HỒ SƠ) -->
+  <div class="bottom-nav-container">
+    <nav class="ios26-nav-dock" id="nav-dock" aria-label="Điều hướng chính">
+      <div class="nav-indicator-pill" id="nav-indicator"></div>
+
+      <button class="nav-tab-btn" id="nav-poetry" data-index="0" onclick="switchTab('poetry')" aria-label="Thơ">
+        <i class="fa-solid fa-feather-pointed"></i>
+        <span>Thơ</span>
+      </button>
+
+      <button class="nav-tab-btn active" id="nav-home" data-index="1" onclick="switchTab('home')" aria-label="Trang chủ">
+        <i class="fa-solid fa-house"></i>
+        <span>Trang chủ</span>
+      </button>
+
+      <button class="nav-tab-btn" id="nav-profile" data-index="2" onclick="switchTab('profile')" aria-label="Hồ sơ">
+        <i class="fa-regular fa-user"></i>
+        <span>Hồ sơ</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- MODAL ĐỌC THƠ & ZEN MODE -->
+  <div class="modal-backdrop" id="readerModalOverlay" onclick="closeReaderOnOutside(event)">
+    <div class="glass-modal-card" id="readerModalBox">
+      <div class="modal-top-bar">
+        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+          <button class="pill-action" onclick="toggleZenMode()" id="zenModeBtn">
+            <i class="fa-solid fa-expand"></i>
+            <span class="hide-xs">Zen</span>
+          </button>
+          <button class="pill-action" onclick="changePoemFontSize(-0.06)" title="Giảm cỡ chữ">A-</button>
+          <button class="pill-action" onclick="changePoemFontSize(0.06)" title="Tăng cỡ chữ">A+</button>
         </div>
-        <div style="display: flex; gap: 8px; align-items: center;">
-          <button class="btn-pill" onclick="navigatePoem(-1)">← Trước</button>
-          <button class="btn-pill" onclick="navigatePoem(1)">Sau →</button>
-          <button class="btn-pill primary" onclick="closeReaderModal()">Đóng</button>
+        <div style="display:flex; gap:6px;">
+          <button class="pill-action" onclick="navigatePoem(-1)" title="Bài trước">←</button>
+          <button class="pill-action" onclick="navigatePoem(1)" title="Bài sau">→</button>
+          <button class="pill-action accent" onclick="closeReaderModal()">Đóng</button>
         </div>
       </div>
-
-      <div class="reader-poem-container" id="readerBody"></div>
+      <div class="reader-paper" id="readerBody"></div>
     </div>
   </div>
 
-  <!-- ========================================================================
-       MODAL TẠO / CHỈNH SỬA BÀI THƠ DÀNH CHO ADMIN
-       ======================================================================== -->
-  <div class="modal-overlay" id="editorModalOverlay">
-    <div class="reader-modal">
-      <div class="reader-toolbar">
-        <h3 id="editorModalTitle" style="font-family: var(--font-display); font-size: 1.5rem;">Soạn tác phẩm mới</h3>
-        <button class="btn-pill" onclick="closePoemEditor()">Đóng</button>
+  <!-- MODAL SOẠN / SỬA BÀI THƠ -->
+  <div class="modal-backdrop" id="editorModalOverlay">
+    <div class="glass-modal-card">
+      <div class="modal-top-bar">
+        <h3 id="editorModalTitle" style="font-size:1.1rem; font-weight:700;">Soạn tác phẩm</h3>
+        <button class="pill-action" onclick="closePoemEditor()">Đóng</button>
       </div>
-
-      <form onsubmit="savePoemFromEditor(event)" style="display: flex; flex-direction: column; gap: 12px;">
+      <form class="form-stack" onsubmit="savePoemFromEditor(event)">
         <input type="hidden" id="editPoemId" />
-        <input type="text" id="editPoemTitle" class="input-field" placeholder="Nhan đề bài thơ *" required />
-
-        <div class="form-row">
-          <select id="editPoemCollection" class="input-field"></select>
-          <input type="text" id="editPoemGenre" class="input-field" placeholder="Thể loại (VD: Thơ tự do, Lục bát)" />
+        <input type="text" id="editPoemTitle" class="input-glass" placeholder="Nhan đề bài thơ *" required />
+        <select id="editPoemCollection" class="input-glass"></select>
+        <input type="text" id="editPoemGenre" class="input-glass" placeholder="Thể loại (VD: Thơ tự do, Lục bát)" />
+        <input type="text" id="editPoemTime" class="input-glass" placeholder="Thời gian (để trống lấy giờ hiện tại)" />
+        <input type="text" id="editPoemContext" class="input-glass" placeholder="Hoàn cảnh viết" />
+        <input type="text" id="editPoemCover" class="input-glass" placeholder="Link ảnh minh họa (URL)" />
+        <label class="pill-action" style="align-self:flex-start;">
+          <i class="fa-regular fa-image"></i> Tải ảnh từ máy
+          <input type="file" accept="image/*" class="hidden" onchange="handlePoemImageUpload(event)" />
+        </label>
+        <input type="url" id="editPoemSpotify" class="input-glass" placeholder="Link nhạc Spotify (https://open.spotify.com/track/...)" />
+        <textarea id="editPoemHighlight" class="input-glass" rows="2" placeholder="Câu thơ điểm nhấn"></textarea>
+        <textarea id="editPoemContent" class="input-glass" rows="7" placeholder="Nội dung bài thơ *" required></textarea>
+        <textarea id="editPoemNote" class="input-glass" rows="2" placeholder="Lời ghi chú của tác giả"></textarea>
+        <div style="display:flex; gap:8px;">
+          <input type="number" id="editPoemLikes" class="input-glass" placeholder="Lượt thích" min="0" />
+          <input type="number" id="editPoemFavs" class="input-glass" placeholder="Yêu thích" min="0" />
         </div>
-
-        <div class="form-row">
-          <input type="text" id="editPoemTime" class="input-field" placeholder="Thời gian đăng tải (Để trống sẽ lấy giờ hiện tại)" />
-          <input type="text" id="editPoemContext" class="input-field" placeholder="Hoàn cảnh sáng tác" />
+        <div style="display:flex; gap:14px; font-size:0.8rem; color:var(--text-sub);">
+          <label><input type="checkbox" id="editPoemFeatured" checked /> Nổi bật</label>
+          <label><input type="checkbox" id="editPoemAllowComments" checked /> Mở bình luận</label>
         </div>
-
-        <!-- Ảnh minh họa: Dán URL hoặc tải ảnh trực tiếp -->
-        <div class="form-row">
-          <input type="text" id="editPoemCover" class="input-field" placeholder="Link ảnh bìa bài thơ (URL)" />
-          <label class="btn-pill" style="justify-content: center;">
-            🖼️ Tải ảnh từ thiết bị
-            <input type="file" accept="image/*" class="hidden" onchange="handlePoemImageUpload(event)" />
-          </label>
-        </div>
-
-        <!-- Nhạc nền Spotify -->
-        <input type="url" id="editPoemSpotify" class="input-field" placeholder="Link nhạc nền Spotify (VD: https://open.spotify.com/track/...)" />
-
-        <textarea id="editPoemHighlight" class="input-field" rows="2" placeholder="Cặp câu thơ mở màn tạo điểm nhấn (hiện ở Trang chủ)"></textarea>
-        <textarea id="editPoemContent" class="input-field" rows="8" placeholder="Nội dung bài thơ (giữ đúng nhịp ngắt dòng) *" required></textarea>
-        <textarea id="editPoemNote" class="input-field" rows="3" placeholder="Lời bình / Góc hậu trường bài thơ"></textarea>
-
-        <!-- Tùy chỉnh tương tác của tác giả -->
-        <div class="form-row" style="align-items: center;">
-          <div style="display: flex; gap: 8px;">
-            <input type="number" id="editPoemLikes" class="input-field" placeholder="Lượt thích" min="0" />
-            <input type="number" id="editPoemFavs" class="input-field" placeholder="Yêu thích" min="0" />
-          </div>
-          <div style="display: flex; gap: 14px; font-size: 0.86rem;">
-            <label><input type="checkbox" id="editPoemFeatured" checked /> Nổi bật</label>
-            <label><input type="checkbox" id="editPoemAllowComments" checked /> Mở bình luận</label>
-          </div>
-        </div>
-
-        <button type="submit" class="btn-pill primary" style="justify-content: center; margin-top: 6px;">
-          Lưu & Đồng bộ tác phẩm
-        </button>
+        <button type="submit" class="pill-action accent" style="justify-content:center; padding:10px 16px; margin-top:4px;">Lưu tác phẩm</button>
       </form>
     </div>
   </div>
 
-  <!-- ========================================================================
-       MODAL TẠO THẺ TRÍCH DẪN (QUOTE CARD)
-       ======================================================================== -->
-  <div class="modal-overlay" id="quoteModalOverlay" onclick="if(event.target===this) closeQuoteModal()">
-    <div class="reader-modal" style="max-width: 520px;">
-      <div class="reader-toolbar">
-        <h3 style="font-family: var(--font-display); font-size: 1.4rem;">Thẻ trích dẫn thơ</h3>
-        <button class="btn-pill" onclick="closeQuoteModal()">Đóng</button>
+  <!-- MODAL THẺ TRÍCH DẪN -->
+  <div class="modal-backdrop" id="quoteModalOverlay" onclick="if(event.target===this) closeQuoteModal()">
+    <div class="glass-modal-card" style="max-width:420px;">
+      <div class="modal-top-bar">
+        <h3 style="font-size:1.05rem; font-weight:700;">Trích dẫn</h3>
+        <button class="pill-action" onclick="closeQuoteModal()">Đóng</button>
       </div>
-      <div class="quote-card-preview" id="quoteCardVisual">
-        <div class="quote-card-text" id="quoteCardText"></div>
-        <div style="font-size: 0.85rem; color: var(--accent); font-weight: 600;" id="quoteCardTitle"></div>
-        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Thiên Minh | w.poetry</div>
+      <div class="quote-preview-box">
+        <div class="quote-preview-verse" id="quoteCardText"></div>
+        <div style="font-size:0.8rem; font-weight:700;" id="quoteCardTitle"></div>
+        <div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px;">Thiên Minh · w.poetry</div>
       </div>
-      <div style="display: flex; justify-content: center; gap: 10px;">
-        <button class="btn-pill primary" onclick="copyCurrentQuote()">📋 Sao chép đoạn thơ</button>
+      <div style="display:flex; justify-content:center;">
+        <button class="pill-action accent" onclick="copyCurrentQuote()">
+          <i class="fa-regular fa-copy"></i> Sao chép trích dẫn
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- ========================================================================
-       MODAL MÃ QR & CHIA SẺ LIÊN KẾT TRANG WEB (Thiên Minh | w.poetry)
-       ======================================================================== -->
-  <div class="modal-overlay" id="qrModalOverlay" onclick="if(event.target===this) closeQrModal()">
-    <div class="reader-modal" style="max-width: 440px; text-align: center;">
-      <div class="reader-toolbar">
-        <h3 style="font-family: var(--font-display); font-size: 1.4rem;">Thiên Minh | w.poetry</h3>
-        <button class="btn-pill" onclick="closeQrModal()">Đóng</button>
+  <!-- MODAL MÃ QR -->
+  <div class="modal-backdrop" id="qrModalOverlay" onclick="if(event.target===this) closeQrModal()">
+    <div class="glass-modal-card" style="max-width:360px; text-align:center;">
+      <div class="modal-top-bar">
+        <h3 style="font-size:1.05rem; font-weight:700;">Thiên Minh · w.poetry</h3>
+        <button class="pill-action" onclick="closeQrModal()">Đóng</button>
       </div>
-      <p style="font-size: 0.86rem; color: var(--text-secondary);">
-        Quét mã QR hoặc sao chép liên kết bên dưới để ghé thăm và chia sẻ không gian thơ.
-      </p>
+      <p style="font-size:0.78rem; color:var(--text-sub);">Quét mã hoặc sao chép liên kết trang thơ.</p>
       <div class="qr-box-wrapper">
         <div id="qrcodeCanvas"></div>
       </div>
-      <div style="display: flex; gap: 8px; margin: 10px 0 16px;">
-        <input type="text" id="shareUrlInput" class="input-field" readonly style="font-size: 0.82rem; text-align: center;" />
-      </div>
-      <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 10px;">
-        <button class="btn-pill primary" onclick="copyWebLink()">📋 Sao chép link</button>
-        <button class="btn-pill" onclick="downloadQrImage()">⬇️ Tải mã QR</button>
+      <input type="text" id="shareUrlInput" class="input-glass" readonly style="font-size:0.76rem; text-align:center; margin-bottom:12px;" />
+      <div style="display:flex; justify-content:center; gap:8px;">
+        <button class="pill-action accent" onclick="copyWebLink()">Sao chép link</button>
+        <button class="pill-action" onclick="downloadQrImage()">Tải QR</button>
       </div>
     </div>
   </div>
 
-  <!-- ========================================================================
-       THANH ĐIỀU HƯỚNG 3 TAB DƯỚI CÙNG: THƠ (TRÁI) - HOME (GIỮA) - HỒ SƠ (PHẢI)
-       ======================================================================== -->
-  <nav class="bottom-nav" aria-label="Điều hướng chính">
-    <!-- Tab Thơ (Phía trái) - Icon tượng trưng cho thơ văn (Lông vũ / Trang viết) -->
-    <button class="nav-item" id="nav-poetry" onclick="switchTab('poetry')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path>
-        <line x1="16" y1="8" x2="2" y2="22"></line>
-        <line x1="17.5" y1="15" x2="9" y2="15"></line>
-      </svg>
-      <span>Thơ</span>
-    </button>
-
-    <!-- Home Tab (Ở giữa) - Icon Home -->
-    <button class="nav-item center-home active" id="nav-home" onclick="switchTab('home')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-      </svg>
-      <span>Trang chủ</span>
-    </button>
-
-    <!-- Tab Hồ sơ cá nhân (Phía phải) - Icon User Profile -->
-    <button class="nav-item" id="nav-profile" onclick="switchTab('profile')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-        <circle cx="12" cy="7" r="4"></circle>
-      </svg>
-      <span>Hồ sơ</span>
-    </button>
-  </nav>
-
-  <!-- Firebase SDK (Compat để chạy mượt trên mọi trình duyệt & GitHub Pages) -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <!-- MODAL LỜI NHẮN NHANH -->
+  <div class="modal-backdrop" id="guestbookModalOverlay" onclick="if(event.target===this) closeGuestbookModal()">
+    <div class="glass-modal-card" style="max-width:400px;">
+      <div class="modal-top-bar">
+        <h3 style="font-size:1.05rem; font-weight:700;">Gửi lời nhắn</h3>
+        <button class="pill-action" onclick="closeGuestbookModal()">Đóng</button>
+      </div>
+      <form class="form-stack" onsubmit="handleModalGuestbookSubmit(event)">
+        <input type="text" id="modalMsgName" class="input-glass" placeholder="Tên của bạn..." required />
+        <textarea id="modalMsgContent" class="input-glass" placeholder="Viết vài dòng gửi đến Nhật Huy..." required></textarea>
+        <button type="submit" class="pill-action accent" style="justify-content:center; padding:9px 14px;">Gửi</button>
+      </form>
+    </div>
+  </div>
 
   <script>
-    // ========================================================================
-    // KHỞI TẠO TRẠNG THÁI & ĐỒNG BỘ DỮ LIỆU (FIREBASE + LOCALSTORAGE)
-    // ========================================================================
     const STORAGE_KEYS = {
       APP_DATA: "w_poetry_synced_data_v1",
       CURRENT_USER: "w_poetry_logged_user_v1",
@@ -1610,89 +1811,250 @@
       THEME_MANUAL: "w_poetry_theme_manual_v1"
     };
 
-    let appState = null;
-    if (window.POETRY_DATA) {
-      appState = JSON.parse(JSON.stringify(window.POETRY_DATA));
-    } else {
-      appState = {
-        siteInfo: {
-          title: "Thiên Minh | w.poetry",
-          shareUrl: "",
-          featuredHeading: "Tuyển tập nổi bật",
-          guestbookTitle: "Gửi lời nhắn cho Thiên Minh",
-          guestbookSubtitle: "Một vài dòng cảm nhận hoặc lời chào dịu dàng gửi đến góc viết của Nhật Huy."
-        },
-        firebaseConfig: { apiKey: "YOUR_FIREBASE_API_KEY" },
-        emailjsConfig: { publicKey: "YOUR_EMAILJS_PUBLIC_KEY" },
-        adminAccount: { email: "lnh.quii@gmail.com", password: "nhzt.wii100614", displayName: "Nhật Huy", penName: "Thiên Minh", role: "admin" },
-        author: {
-          name: "Nhật Huy",
-          penName: "Thiên Minh",
-          avatar: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=400&q=80",
-          bioLabel: "Nhật Huy | w.bio",
-          bioUrl: "https://nhztwiie.github.io/w",
-          introParagraph: "Tôi tên Nhật Huy. Nhằm muốn ẩn mình để hòa nhịp cùng những áng thơ, tôi quyết định chọn bút danh Thiên Minh.",
-          philosophy: "Thơ không cần ồn ào để chạm tới lòng người.",
-          milestones: [],
-          socials: []
-        },
-        collections: [{ id: "all", name: "Tất cả" }],
-        poems: []
-      };
-    }
+    const TAB_INDEX_MAP = { poetry: 0, home: 1, profile: 2 };
+    const INDEX_TAB_MAP = ["poetry", "home", "profile"];
+
+    let appState = window.POETRY_DATA
+      ? JSON.parse(JSON.stringify(window.POETRY_DATA))
+      : {
+          siteInfo: {
+            title: "Thiên Minh | w.poetry",
+            shareUrl: "",
+            featuredHeading: "Tuyển tập nổi bật",
+            guestbookTitle: "Gửi lời nhắn cho Thiên Minh",
+            guestbookSubtitle: "Một vài dòng cảm nhận hoặc lời chào dịu dàng gửi đến góc viết của Nhật Huy."
+          },
+          firebaseConfig: { apiKey: "YOUR_FIREBASE_API_KEY" },
+          emailjsConfig: { publicKey: "YOUR_EMAILJS_PUBLIC_KEY" },
+          adminAccount: {
+            email: "lnh.quii@gmail.com",
+            password: "nhzt.wii100614",
+            displayName: "Nhật Huy",
+            penName: "Thiên Minh",
+            role: "admin"
+          },
+          author: {
+            name: "Nhật Huy",
+            penName: "Thiên Minh",
+            avatar: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=400&q=80",
+            bioLabel: "Nhật Huy | w.bio",
+            bioUrl: "https://nhztwiie.github.io/w",
+            introParagraph: "",
+            philosophy: "",
+            milestones: [],
+            socials: []
+          },
+          collections: [{ id: "all", name: "Tất cả" }],
+          poems: []
+        };
+
     let currentCollection = "all";
     let currentReaderPoemId = null;
     let currentQuoteToCopy = "";
     let firebaseDb = null;
-    let isFirebaseConnected = false;
 
-    // 1. Khởi tạo Firebase Realtime Database nếu đã điền config thật
+    /* ========================================================================
+       1. THEME, CLOCK & LIQUID GLASS SPOTLIGHT
+       ======================================================================== */
+    function getAutoThemeByTime(date = new Date()) {
+      const hour = date.getHours();
+      return (hour >= 6 && hour < 18) ? "light" : "dark";
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute("data-theme", theme);
+      const metaTheme = document.getElementById("meta-theme-color");
+      if (metaTheme) {
+        metaTheme.setAttribute("content", theme === "light" ? "#e9efe7" : "#111317");
+      }
+    }
+
+    function toggleTheme() {
+      const mainCard = document.getElementById("main-card");
+      const current = document.documentElement.getAttribute("data-theme");
+      const next = current === "light" ? "dark" : "light";
+      localStorage.setItem(STORAGE_KEYS.THEME_MANUAL, next);
+      mainCard.classList.add("theme-transitioning");
+      setTimeout(() => {
+        applyTheme(next);
+        mainCard.classList.remove("theme-transitioning");
+      }, 180);
+    }
+
+    function updateDeviceClockAndTheme() {
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2, "0");
+      const mm = String(now.getMinutes()).padStart(2, "0");
+      const clockEl = document.getElementById("realtime-clock");
+      if (clockEl) clockEl.textContent = `${hh}:${mm}`;
+
+      const manual = localStorage.getItem(STORAGE_KEYS.THEME_MANUAL);
+      if (!manual) {
+        const auto = getAutoThemeByTime(now);
+        if (document.documentElement.getAttribute("data-theme") !== auto) {
+          applyTheme(auto);
+        }
+      }
+    }
+
+    function initSpotlightAndDroplets() {
+      const mainCard = document.getElementById("main-card");
+      if (!mainCard) return;
+
+      if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+        mainCard.addEventListener("mousemove", (e) => {
+          const rect = mainCard.getBoundingClientRect();
+          mainCard.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
+          mainCard.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
+        });
+      }
+
+      mainCard.addEventListener("pointerdown", (e) => {
+        if (e.target.closest("textarea, input, select")) return;
+        const rect = mainCard.getBoundingClientRect();
+        const ripple = document.createElement("span");
+        ripple.className = "water-ripple";
+        ripple.style.left = `${e.clientX - rect.left}px`;
+        ripple.style.top = `${e.clientY - rect.top}px`;
+        mainCard.appendChild(ripple);
+        ripple.addEventListener("animationend", () => ripple.remove());
+      });
+
+      const themeToggle = document.getElementById("theme-toggle");
+      if (themeToggle) {
+        themeToggle.addEventListener("click", toggleTheme);
+      }
+    }
+
+    function initAmbientCanvas() {
+      const canvas = document.getElementById("ambient-particles");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d", { alpha: true });
+
+      let width = window.innerWidth;
+      let height = window.innerHeight;
+      let isMobile = width < 768;
+      let dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2);
+
+      function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        isMobile = width < 768;
+        dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2);
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      resize();
+      window.addEventListener("resize", resize, { passive: true });
+
+      const mouse = { x: -9999, y: -9999, active: false };
+      window.addEventListener("mousemove", (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+        mouse.active = true;
+      }, { passive: true });
+      window.addEventListener("mouseleave", () => { mouse.active = false; });
+
+      const count = isMobile ? 22 : 44;
+      const dots = Array.from({ length: count }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: (Math.random() - 0.5) * 0.35,
+        r: Math.random() * 2 + 1.2,
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.012 + Math.random() * 0.018
+      }));
+
+      function draw() {
+        if (!document.hidden) {
+          ctx.clearRect(0, 0, width, height);
+          const isLight = document.documentElement.getAttribute("data-theme") === "light";
+
+          for (const d of dots) {
+            d.phase += d.speed;
+            if (mouse.active) {
+              const dx = mouse.x - d.x;
+              const dy = mouse.y - d.y;
+              const dist = Math.hypot(dx, dy);
+              if (dist < 190 && dist > 1) {
+                const force = (1 - dist / 190) * 0.03;
+                d.vx += (dx / dist) * force;
+                d.vy += (dy / dist) * force;
+              }
+            }
+            d.vx *= 0.96;
+            d.vy *= 0.96;
+            d.x += d.vx + Math.sin(d.phase) * 0.22;
+            d.y += d.vy + (isLight ? 0.35 : -0.14);
+
+            if (d.x < -20) d.x = width + 20;
+            if (d.x > width + 20) d.x = -20;
+            if (d.y < -20) d.y = height + 20;
+            if (d.y > height + 20) d.y = -20;
+
+            const alpha = 0.35 + Math.sin(d.phase * 1.3) * 0.22;
+            const g = ctx.createRadialGradient(d.x, d.y, 0, d.x, d.y, d.r * 3.8);
+            if (isLight) {
+              g.addColorStop(0, `rgba(63, 94, 75, ${alpha})`);
+              g.addColorStop(1, "rgba(63, 94, 75, 0)");
+            } else {
+              g.addColorStop(0, `rgba(248, 250, 252, ${alpha})`);
+              g.addColorStop(1, "rgba(248, 250, 252, 0)");
+            }
+            ctx.fillStyle = g;
+            ctx.beginPath();
+            ctx.arc(d.x, d.y, d.r * 3.8, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+        requestAnimationFrame(draw);
+      }
+      requestAnimationFrame(draw);
+    }
+
+    /* ========================================================================
+       2. FIREBASE & LOCALSTORAGE SYNC
+       ======================================================================== */
     function initFirebaseSync() {
       const cfg = appState.firebaseConfig;
       if (cfg && cfg.apiKey && !cfg.apiKey.includes("YOUR_FIREBASE")) {
         try {
-          if (!firebase.apps.length) {
-            firebase.initializeApp(cfg);
-          }
+          if (!firebase.apps.length) firebase.initializeApp(cfg);
           firebaseDb = firebase.database();
-          const rootRef = firebaseDb.ref("w_poetry_store");
-
-          // Lắng nghe thay đổi từ Admin theo thời gian thực và cập nhật cho mọi User
-          rootRef.on("value", (snapshot) => {
-            const remoteData = snapshot.val();
-            if (remoteData) {
-              if (remoteData.siteInfo) appState.siteInfo = remoteData.siteInfo;
-              if (remoteData.adminAccount) appState.adminAccount = remoteData.adminAccount;
-              if (remoteData.author) appState.author = remoteData.author;
-              if (remoteData.collections) appState.collections = remoteData.collections;
-              if (remoteData.poems) appState.poems = remoteData.poems;
+          const ref = firebaseDb.ref("w_poetry_store");
+          ref.on("value", (snap) => {
+            const val = snap.val();
+            if (val) {
+              if (val.siteInfo) appState.siteInfo = val.siteInfo;
+              if (val.adminAccount) appState.adminAccount = val.adminAccount;
+              if (val.author) appState.author = val.author;
+              if (val.collections) appState.collections = val.collections;
+              if (val.poems) appState.poems = val.poems;
               localStorage.setItem(STORAGE_KEYS.APP_DATA, JSON.stringify(appState));
               refreshAllUI();
             } else {
-              // Đẩy dữ liệu khởi tạo lên Firebase lần đầu
               pushDataToFirebase();
             }
-            isFirebaseConnected = true;
-            updateSyncIndicator(true);
+            updateSyncDot(true);
           });
-        } catch (err) {
-          console.warn("Firebase fallback sang LocalStorage:", err);
-          updateSyncIndicator(false);
+        } catch (e) {
+          updateSyncDot(false);
         }
       } else {
-        // Chế độ lưu cục bộ khi chưa gắn key Firebase
         const cached = localStorage.getItem(STORAGE_KEYS.APP_DATA);
         if (cached) {
           try {
-            const parsed = JSON.parse(cached);
-            appState.siteInfo = parsed.siteInfo || appState.siteInfo;
-            appState.adminAccount = parsed.adminAccount || appState.adminAccount;
-            appState.author = parsed.author || appState.author;
-            appState.collections = parsed.collections || appState.collections;
-            appState.poems = parsed.poems || appState.poems;
+            const p = JSON.parse(cached);
+            appState.siteInfo = p.siteInfo || appState.siteInfo;
+            appState.adminAccount = p.adminAccount || appState.adminAccount;
+            appState.author = p.author || appState.author;
+            appState.collections = p.collections || appState.collections;
+            appState.poems = p.poems || appState.poems;
           } catch (e) {}
         }
-        updateSyncIndicator(false);
+        updateSyncDot(false);
       }
     }
 
@@ -1710,183 +2072,149 @@
       }
     }
 
-    function updateSyncIndicator(connected) {
+    function updateSyncDot(online) {
       const dot = document.getElementById("syncStatusDot");
-      const statusTxt = document.getElementById("firebaseStatusText");
-      if (dot) {
-        dot.style.background = connected ? "#4caf50" : "#e0a800";
-        dot.title = connected
-          ? "Đã kết nối Firebase Realtime Sync"
-          : "Đang chạy bộ nhớ cục bộ (Điền firebaseConfig trong data.js để đồng bộ đa thiết bị)";
-      }
-      if (statusTxt) {
-        statusTxt.textContent = connected
-          ? "Trạng thái: Đã kết nối Firebase Console — Mọi thay đổi được đồng bộ trực tiếp lên User."
-          : "Trạng thái: Đang lưu trên trình duyệt (Hãy điền firebaseConfig trong data.js để đồng bộ qua Firebase Console).";
+      const txt = document.getElementById("firebaseStatusText");
+      if (dot) dot.style.background = online ? "#22c55e" : "#eab308";
+      if (txt) {
+        txt.textContent = online
+          ? "Đã đồng bộ Firebase trực tiếp."
+          : "Lưu cục bộ (cấu hình Firebase trong data.js để đồng bộ đa thiết bị).";
       }
     }
 
-    // ========================================================================
-    // 2. ĐỒNG HỒ THIẾT BỊ & TỰ ĐỘNG CHUYỂN CHẾ ĐỘ SÁNG / TỐI THEO GIỜ
-    // ========================================================================
-    function updateDeviceClockAndTheme() {
-      const now = new Date();
-      const hh = String(now.getHours()).padStart(2, "0");
-      const mm = String(now.getMinutes()).padStart(2, "0");
-      const clockEl = document.getElementById("deviceClock");
-      if (clockEl) clockEl.textContent = `${hh}:${mm}`;
-
-      const manualTheme = localStorage.getItem(STORAGE_KEYS.THEME_MANUAL);
-      if (!manualTheme) {
-        const hour = now.getHours();
-        const isDay = hour >= 6 && hour < 18;
-        applyTheme(isDay ? "light" : "dark", false);
-      }
-    }
-
-    function applyTheme(theme, isManual = true) {
-      document.documentElement.setAttribute("data-theme", theme);
-      const icon = document.getElementById("themeIcon");
-      const label = document.getElementById("themeLabel");
-      if (icon && label) {
-        icon.textContent = theme === "light" ? "☀️" : "🌙";
-        label.textContent = theme === "light" ? "Ban ngày" : "Ban đêm";
-      }
-      if (isManual) {
-        localStorage.setItem(STORAGE_KEYS.THEME_MANUAL, theme);
-      }
-    }
-
-    function toggleTheme() {
-      const current = document.documentElement.getAttribute("data-theme");
-      const next = current === "light" ? "dark" : "light";
-      applyTheme(next, true);
-      showToast(next === "light" ? "Đã chuyển sang nền kem ấm ban ngày" : "Đã chuyển sang nền đêm tĩnh lặng");
-    }
-
-    // ========================================================================
-    // 3. ĐIỀU HƯỚNG 3 TAB & THANH TIẾN ĐỘ ĐỌC
-    // ========================================================================
+    /* ========================================================================
+       3. TAB NAVIGATION & DOCK INDICATOR
+       ======================================================================== */
     function switchTab(tabName) {
-      document.querySelectorAll(".tab-view").forEach((el) => el.classList.remove("active"));
-      document.querySelectorAll(".nav-item").forEach((el) => el.classList.remove("active"));
+      const idx = TAB_INDEX_MAP[tabName] ?? 1;
+      document.querySelectorAll(".tab-page").forEach((el) => el.classList.remove("active-tab"));
+      document.querySelectorAll(".nav-tab-btn").forEach((btn) => btn.classList.remove("active"));
 
-      const targetTab = document.getElementById(`tab-${tabName}`);
-      const targetNav = document.getElementById(`nav-${tabName}`);
-      if (targetTab) targetTab.classList.add("active");
-      if (targetNav) targetNav.classList.add("active");
+      const activePage = document.getElementById(`tab-${tabName}`);
+      const activeBtn = document.getElementById(`nav-${tabName}`);
+      const indicator = document.getElementById("nav-indicator");
 
+      if (activePage) activePage.classList.add("active-tab");
+      if (activeBtn) {
+        activeBtn.classList.add("active");
+        if (indicator) {
+          indicator.style.transform = `translate3d(${activeBtn.offsetLeft - 5}px, 0, 0)`;
+        }
+      }
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    window.addEventListener("scroll", () => {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-      document.getElementById("readingProgress").style.width = `${pct}%`;
-    });
+    window.addEventListener("resize", () => {
+      const activeBtn = document.querySelector(".nav-tab-btn.active");
+      const indicator = document.getElementById("nav-indicator");
+      if (activeBtn && indicator) {
+        indicator.style.transform = `translate3d(${activeBtn.offsetLeft - 5}px, 0, 0)`;
+      }
+    }, { passive: true });
 
-    // ========================================================================
-    // 4. HIỂN THỊ HOME TAB (NHẬT HUY / THIÊN MINH / THẺ GIỚI THIỆU ẤN MỞ)
-    // ========================================================================
+    window.addEventListener("scroll", () => {
+      const top = window.scrollY;
+      const height = document.documentElement.scrollHeight - window.innerHeight;
+      document.getElementById("readingProgress").style.width = `${height > 0 ? (top / height) * 100 : 0}%`;
+    }, { passive: true });
+
+    /* ========================================================================
+       4. RENDER BIO HOME, POETRY FEED & PROFILE
+       ======================================================================== */
     function renderHomeTab() {
       const site = appState.siteInfo || {};
-      if (site.title) {
-        document.title = site.title;
-        const topBrand = document.getElementById("topBrandTitle");
-        if (topBrand) topBrand.textContent = site.title;
-      }
-      if (site.featuredHeading) {
-        const fh = document.getElementById("featuredSectionHeading");
-        if (fh) fh.textContent = site.featuredHeading;
-      }
-      if (site.guestbookTitle) {
-        const gt = document.getElementById("guestbookSectionTitle");
-        if (gt) gt.textContent = site.guestbookTitle;
-      }
-      if (site.guestbookSubtitle) {
-        const gs = document.getElementById("guestbookSectionSubtitle");
-        if (gs) gs.textContent = site.guestbookSubtitle;
-      }
+      if (site.title) document.title = site.title;
+      if (site.featuredHeading) document.getElementById("featuredSectionHeading").textContent = site.featuredHeading;
+      if (site.guestbookTitle) document.getElementById("guestbookSectionTitle").textContent = site.guestbookTitle;
+      if (site.guestbookSubtitle) document.getElementById("guestbookSectionSubtitle").textContent = site.guestbookSubtitle;
 
       const author = appState.author;
       document.getElementById("heroAvatar").src = author.avatar;
       document.getElementById("heroName").textContent = author.name;
-      document.getElementById("heroPenName").textContent = `Bút danh: ${author.penName}`;
-      document.getElementById("heroBioLabel").textContent = author.bioLabel || "Nhật Huy | w.bio";
-      document.getElementById("heroBioLink").href = author.bioUrl || "https://nhztwiie.github.io/w";
-      document.getElementById("heroIntroText").textContent = author.introParagraph;
-      document.getElementById("heroPhilosophy").textContent = author.philosophy || "";
+      document.getElementById("heroPenName").textContent = `${author.penName} · w.poetry`;
 
-      const milestoneUl = document.getElementById("heroMilestones");
-      milestoneUl.innerHTML = (author.milestones || [])
-        .map((m) => `<li><strong>${m.year}:</strong> ${m.text}</li>`)
+      const bioLink = document.getElementById("heroBioLink");
+      bioLink.textContent = author.bioLabel || "Nhật Huy | w.bio";
+      bioLink.href = author.bioUrl || "https://nhztwiie.github.io/w";
+
+      document.getElementById("heroIntroText").textContent = author.introParagraph || "";
+      document.getElementById("heroPhilosophy").textContent = author.philosophy
+        ? `Triết lý: ${author.philosophy}`
+        : "";
+      document.getElementById("heroMilestones").innerHTML = (author.milestones || [])
+        .map((m) => `<div><strong>${escapeHtml(m.year)}</strong> — ${escapeHtml(m.text)}</div>`)
+        .join("");
+      document.getElementById("heroSocialLinks").innerHTML = (author.socials || [])
+        .map((s) => `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener noreferrer" class="pill-action">${escapeHtml(s.label)} ↗</a>`)
         .join("");
 
-      const socialWrap = document.getElementById("heroSocialLinks");
-      socialWrap.innerHTML = (author.socials || [])
-        .map(
-          (s) =>
-            `<a href="${s.url}" target="_blank" rel="noopener noreferrer" class="poem-badge" style="text-decoration:none;">${s.label} ↗</a>`
-        )
-        .join("");
+      // Danh sách bài thơ nổi bật kiểu bio link
+      const featured = appState.poems.filter((p) => p.featured).slice(0, 4);
+      document.getElementById("featuredList").innerHTML = featured
+        .map((p) => {
+          const snippet = (
+            p.highlightVerse ||
+            p.content.split("\n").map((l) => l.trim()).filter(Boolean).slice(0, 2).join(" · ")
+          ).replace(/\n+/g, " · ");
 
-      // Render 3-5 bài thơ tiêu biểu ở Trang chủ
-      const featuredPoems = appState.poems.filter((p) => p.featured).slice(0, 5);
-      const grid = document.getElementById("featuredGrid");
-      grid.innerHTML = featuredPoems
-        .map((poem) => {
-          const verse =
-            poem.highlightVerse ||
-            poem.content
-              .split("\n")
-              .filter((l) => l.trim())
-              .slice(0, 2)
-              .join("\n");
           return `
-            <article class="featured-card" onclick="openReaderModal('${poem.id}')">
-              <div class="featured-verse">${escapeHtml(verse)}</div>
-              <div class="featured-footer">
-                <strong style="color: var(--text-primary);">${escapeHtml(poem.title)}</strong>
-                <span>Đọc thơ →</span>
+            <button class="bio-link-row" onclick="openReaderModal('${p.id}')">
+              <div class="bio-link-left">
+                <div class="bio-link-title">${escapeHtml(p.title)}</div>
+                <div class="bio-link-snippet">${escapeHtml(snippet)}</div>
               </div>
-            </article>
+              <i class="fa-solid fa-chevron-right bio-link-arrow"></i>
+            </button>
+          `;
+        })
+        .join("");
+
+      // Danh sách tập thơ kiểu bio link
+      const cols = appState.collections.filter((c) => c.id !== "all");
+      document.getElementById("homeCollectionsList").innerHTML = cols
+        .map((c) => {
+          const count = appState.poems.filter((p) => p.collectionId === c.id).length;
+          return `
+            <button class="bio-link-row" onclick="openCollectionInPoetry('${c.id}')">
+              <div class="bio-link-left">
+                <div class="bio-link-title">${escapeHtml(c.name)}</div>
+                <div class="bio-link-snippet">${count} bài thơ</div>
+              </div>
+              <i class="fa-solid fa-chevron-right bio-link-arrow"></i>
+            </button>
           `;
         })
         .join("");
     }
 
+    function openCollectionInPoetry(colId) {
+      currentCollection = colId;
+      renderCollectionTabs();
+      renderPoetryFeed();
+      switchTab("poetry");
+    }
+
     function toggleIntroCard() {
       const drawer = document.getElementById("introDrawer");
       const label = document.getElementById("toggleIntroText");
-      const isOpen = drawer.classList.toggle("open");
-      label.textContent = isOpen ? "Thu gọn giới thiệu" : "Lời ngỏ thi gia";
+      const opened = drawer.classList.toggle("open");
+      label.textContent = opened ? "Thu gọn" : "Đôi nét";
     }
 
-    // ========================================================================
-    // 5. HIỂN THỊ TAB THƠ & CHUYỂN ĐỔI LINK SPOTIFY SANG EMBED PLAYER
-    // ========================================================================
     function getSpotifyEmbedUrl(url) {
       if (!url) return "";
-      try {
-        const match = url.match(/open\.spotify\.com\/(intl-[a-z]+\/)?(track|album|playlist|episode)\/([a-zA-Z0-9]+)/);
-        if (match) {
-          return `https://open.spotify.com/embed/${match[2]}/${match[3]}?utm_source=generator&theme=0`;
-        }
-      } catch (e) {}
-      return "";
+      const match = url.match(/open\.spotify\.com\/(intl-[a-z]+\/)?(track|album|playlist|episode)\/([a-zA-Z0-9]+)/);
+      return match ? `https://open.spotify.com/embed/${match[2]}/${match[3]}?utm_source=generator&theme=0` : "";
     }
 
     function renderCollectionTabs() {
-      const container = document.getElementById("collectionTabs");
-      container.innerHTML = appState.collections
-        .map(
-          (col) => `
+      document.getElementById("collectionTabs").innerHTML = appState.collections
+        .map((col) => `
           <button class="col-chip ${currentCollection === col.id ? "active" : ""}" onclick="selectCollection('${col.id}')">
             ${escapeHtml(col.name)}
           </button>
-        `
-        )
+        `)
         .join("");
     }
 
@@ -1900,81 +2228,61 @@
       const query = (document.getElementById("poemSearchInput").value || "").toLowerCase().trim();
       const reactions = getUserReactions();
 
-      const filtered = appState.poems.filter((poem) => {
-        const matchCol = currentCollection === "all" || poem.collectionId === currentCollection;
+      const list = appState.poems.filter((p) => {
+        const matchCol = currentCollection === "all" || p.collectionId === currentCollection;
         const matchQuery =
           !query ||
-          poem.title.toLowerCase().includes(query) ||
-          poem.content.toLowerCase().includes(query) ||
-          (poem.genre && poem.genre.toLowerCase().includes(query));
+          p.title.toLowerCase().includes(query) ||
+          p.content.toLowerCase().includes(query) ||
+          (p.genre && p.genre.toLowerCase().includes(query));
         return matchCol && matchQuery;
       });
 
       const feed = document.getElementById("poemFeed");
-      if (!filtered.length) {
-        feed.innerHTML = `<div class="profile-card" style="text-align:center; color:var(--text-secondary);">Chưa tìm thấy bài thơ phù hợp với từ khóa hoặc tập thơ này.</div>`;
+      if (!list.length) {
+        feed.innerHTML = `<div class="glass-panel" style="text-align:center; color:var(--text-sub);">Chưa có bài thơ phù hợp.</div>`;
         return;
       }
 
-      feed.innerHTML = filtered
-        .map((poem) => {
-          const colObj = appState.collections.find((c) => c.id === poem.collectionId);
-          const colName = colObj ? colObj.name : "Thơ chọn lọc";
-          const embedUrl = getSpotifyEmbedUrl(poem.spotifyUrl);
-          const userReact = reactions[poem.id] || {};
-          const excerptLines = poem.content.split("\n").slice(0, 6).join("\n");
-          const hasMore = poem.content.split("\n").length > 6;
+      feed.innerHTML = list
+        .map((p) => {
+          const col = appState.collections.find((c) => c.id === p.collectionId);
+          const colName = col ? col.name : "Thơ";
+          const embedUrl = getSpotifyEmbedUrl(p.spotifyUrl);
+          const userReact = reactions[p.id] || {};
+          const lines = p.content.split("\n");
+          const preview = lines.slice(0, 6).join("\n") + (lines.length > 6 ? "\n..." : "");
 
           return `
-            <article class="poem-card">
-              ${
-                poem.coverImage
-                  ? `<img class="poem-card-cover" src="${poem.coverImage}" alt="${escapeHtml(poem.title)}" onclick="openReaderModal('${poem.id}')" loading="lazy" />`
-                  : ""
-              }
-              <div class="poem-card-body">
-                <div class="poem-card-header">
-                  <div class="author-mini">
-                    <img src="${appState.author.avatar}" alt="${appState.author.name}" />
-                    <div class="author-mini-info">
-                      <span class="author-mini-name">${escapeHtml(appState.author.name)} <em style="font-weight:400; color:var(--accent);">(${escapeHtml(appState.author.penName)})</em></span>
-                      <span class="poem-time">${escapeHtml(poem.createdAt)}</span>
-                    </div>
-                  </div>
-                  <span class="poem-badge">${escapeHtml(colName)}</span>
+            <article class="poem-item-card">
+              ${p.coverImage ? `<img class="poem-cover-thumb" src="${escapeHtml(p.coverImage)}" alt="${escapeHtml(p.title)}" onclick="openReaderModal('${p.id}')" loading="lazy" />` : ""}
+              <div class="poem-item-body">
+                <div class="poem-item-meta">
+                  <span>${escapeHtml(p.createdAt)} · ${escapeHtml(p.genre || "Thơ")}</span>
+                  <span class="poem-col-tag">${escapeHtml(colName)}</span>
                 </div>
-
-                <h3 class="poem-card-title" onclick="openReaderModal('${poem.id}')">${escapeHtml(poem.title)}</h3>
-                <div class="poem-excerpt" onclick="openReaderModal('${poem.id}')">${escapeHtml(excerptLines)}${hasMore ? "\n..." : ""}</div>
-
+                <h3 class="poem-item-title" onclick="openReaderModal('${p.id}')">${escapeHtml(p.title)}</h3>
+                <div class="poem-verse-preview" onclick="openReaderModal('${p.id}')">${escapeHtml(preview)}</div>
                 ${
                   embedUrl
-                    ? `<div class="spotify-embed-box">
-                        <iframe src="${embedUrl}" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                      </div>`
+                    ? `<div class="spotify-embed-box"><iframe src="${embedUrl}" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>`
                     : ""
                 }
-
-                <div class="poem-actions">
-                  <div class="reaction-group">
-                    <button class="react-btn ${userReact.liked ? "active" : ""}" onclick="toggleReaction('${poem.id}', 'liked')">
-                      👍 Thích <span>${poem.likes || 0}</span>
+                <div class="poem-foot-bar">
+                  <div class="react-cluster">
+                    <button class="react-pill ${userReact.liked ? "active" : ""}" onclick="toggleReaction('${p.id}', 'liked')">
+                      <i class="fa-regular fa-thumbs-up"></i> <span>${p.likes || 0}</span>
                     </button>
-                    <button class="react-btn ${userReact.favorited ? "active" : ""}" onclick="toggleReaction('${poem.id}', 'favorited')">
-                      ❤️ Yêu thích <span>${poem.favorites || 0}</span>
+                    <button class="react-pill ${userReact.favorited ? "active" : ""}" onclick="toggleReaction('${p.id}', 'favorited')">
+                      <i class="fa-regular fa-heart"></i> <span>${p.favorites || 0}</span>
                     </button>
-                    <button class="react-btn" onclick="openReaderModal('${poem.id}', true)">
-                      💬 Bình luận <span>${(poem.comments || []).length}</span>
+                    <button class="react-pill" onclick="openReaderModal('${p.id}', true)">
+                      <i class="fa-regular fa-comment"></i> <span>${(p.comments || []).length}</span>
                     </button>
                   </div>
-
-                  <div class="reaction-group">
-                    <button class="react-btn" onclick="openQuoteModal('${poem.id}')" title="Tạo thẻ trích dẫn">
-                      ✨ Trích dẫn
-                    </button>
-                    <button class="react-btn" onclick="openReaderModal('${poem.id}')">
-                      Đọc trọn vẹn →
-                    </button>
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    <button class="read-link-btn" onclick="openQuoteModal('${p.id}')">Trích</button>
+                    <button class="read-link-btn" onclick="openReaderModal('${p.id}')">Đọc →</button>
                   </div>
                 </div>
               </div>
@@ -1995,14 +2303,13 @@
     function toggleReaction(poemId, type) {
       const poem = appState.poems.find((p) => p.id === poemId);
       if (!poem) return;
-
       const reactions = getUserReactions();
       if (!reactions[poemId]) reactions[poemId] = {};
 
       if (type === "liked") {
         reactions[poemId].liked = !reactions[poemId].liked;
         poem.likes = Math.max(0, (poem.likes || 0) + (reactions[poemId].liked ? 1 : -1));
-      } else if (type === "favorited") {
+      } else {
         reactions[poemId].favorited = !reactions[poemId].favorited;
         poem.favorites = Math.max(0, (poem.favorites || 0) + (reactions[poemId].favorited ? 1 : -1));
       }
@@ -2013,21 +2320,17 @@
       if (currentReaderPoemId === poemId) renderReaderContent(poem);
     }
 
-    // ========================================================================
-    // 6. MODAL ĐỌC THƠ CHI TIẾT, ZEN MODE, BÌNH LUẬN & THẺ TRÍCH DẪN
-    // ========================================================================
+    /* ========================================================================
+       5. READER MODAL, ZEN MODE, COMMENTS & QUOTE CARD
+       ======================================================================== */
     function openReaderModal(poemId, focusComment = false) {
       const poem = appState.poems.find((p) => p.id === poemId);
       if (!poem) return;
       currentReaderPoemId = poemId;
       renderReaderContent(poem);
-      document.getElementById("readerModalOverlay").classList.add("open");
-
+      document.getElementById("readerModalOverlay").classList.add("active");
       if (focusComment) {
-        setTimeout(() => {
-          const input = document.getElementById("readerCommentInput");
-          if (input) input.focus();
-        }, 200);
+        setTimeout(() => document.getElementById("readerCommentInput")?.focus(), 180);
       }
     }
 
@@ -2036,73 +2339,52 @@
       const reactions = getUserReactions()[poem.id] || {};
       const isAdmin = getLoggedUser()?.role === "admin";
       const commentsHtml = (poem.comments || [])
-        .map(
-          (c) => `
-          <div class="comment-item">
-            <div class="comment-item-head">
+        .map((c) => `
+          <div class="comment-entry">
+            <div style="display:flex; justify-content:space-between; font-size:0.75rem; font-weight:700; margin-bottom:3px;">
               <span>${escapeHtml(c.authorName)}</span>
-              <span style="display:flex; align-items:center; gap:8px; color: var(--text-muted); font-weight: 400;">
+              <span style="color:var(--text-muted); font-weight:400;">
                 ${escapeHtml(c.createdAt)}
-                ${isAdmin ? `<button onclick="deleteComment('${poem.id}', '${c.id}')" style="border:none; background:none; color:#d9534f; cursor:pointer; font-size:0.78rem;" title="Xóa bình luận">Xóa</button>` : ""}
+                ${isAdmin ? `<button onclick="deleteComment('${poem.id}', '${c.id}')" style="border:none; background:none; color:var(--danger); cursor:pointer; margin-left:6px; font-size:0.74rem;">Xóa</button>` : ""}
               </span>
             </div>
-            <div>${escapeHtml(c.text)}</div>
+            <div style="color:var(--text-quote);">${escapeHtml(c.text)}</div>
           </div>
-        `
-        )
+        `)
         .join("");
 
       document.getElementById("readerBody").innerHTML = `
-        <h2 class="reader-title">${escapeHtml(poem.title)}</h2>
-        <div class="reader-meta">
+        <h2 class="reader-poem-title">${escapeHtml(poem.title)}</h2>
+        <div class="reader-poem-meta">
           ${escapeHtml(poem.createdAt)} · ${escapeHtml(poem.genre || "Thơ")}
-          ${poem.context ? `<br/><em>Hoàn cảnh: ${escapeHtml(poem.context)}</em>` : ""}
+          ${poem.context ? `<div><em>${escapeHtml(poem.context)}</em></div>` : ""}
         </div>
-
-        ${poem.coverImage ? `<img class="reader-cover" src="${poem.coverImage}" alt="${escapeHtml(poem.title)}" />` : ""}
-
-        ${
-          embedUrl
-            ? `<div class="spotify-embed-box" style="margin-bottom: 22px;">
-                <iframe src="${embedUrl}" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-              </div>`
-            : ""
-        }
-
-        <div class="reader-content">${escapeHtml(poem.content)}</div>
-
-        ${
-          poem.authorNote
-            ? `<details class="author-note-box">
-                <summary style="cursor:pointer; font-weight:600; color:var(--accent);">Góc hậu trường & Lời bình của Thiên Minh</summary>
-                <p style="margin-top:8px; line-height:1.7;">${escapeHtml(poem.authorNote)}</p>
-              </details>`
-            : ""
-        }
-
-        <div class="poem-actions">
-          <div class="reaction-group">
-            <button class="react-btn ${reactions.liked ? "active" : ""}" onclick="toggleReaction('${poem.id}', 'liked')">
-              👍 Thích (${poem.likes || 0})
+        ${poem.coverImage ? `<img class="reader-poem-img" src="${escapeHtml(poem.coverImage)}" alt="${escapeHtml(poem.title)}" />` : ""}
+        ${embedUrl ? `<div class="spotify-embed-box" style="margin-bottom:16px;"><iframe src="${embedUrl}" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>` : ""}
+        <div class="reader-poem-body">${escapeHtml(poem.content)}</div>
+        ${poem.authorNote ? `<div class="reader-note-box"><strong>Ghi chú:</strong> ${escapeHtml(poem.authorNote)}</div>` : ""}
+        <div class="poem-foot-bar" style="border-top:none; padding-top:0;">
+          <div class="react-cluster">
+            <button class="react-pill ${reactions.liked ? "active" : ""}" onclick="toggleReaction('${poem.id}', 'liked')">
+              <i class="fa-regular fa-thumbs-up"></i> <span>${poem.likes || 0}</span>
             </button>
-            <button class="react-btn ${reactions.favorited ? "active" : ""}" onclick="toggleReaction('${poem.id}', 'favorited')">
-              ❤️ Yêu thích (${poem.favorites || 0})
+            <button class="react-pill ${reactions.favorited ? "active" : ""}" onclick="toggleReaction('${poem.id}', 'favorited')">
+              <i class="fa-regular fa-heart"></i> <span>${poem.favorites || 0}</span>
             </button>
           </div>
-          <button class="btn-pill" onclick="openQuoteModal('${poem.id}')">✨ Tạo thẻ trích dẫn</button>
+          <button class="pill-action" onclick="openQuoteModal('${poem.id}')">Trích dẫn</button>
         </div>
-
-        <div class="comment-section">
-          <h4 style="margin-bottom: 12px;">Cảm nhận của bạn đọc (${(poem.comments || []).length})</h4>
+        <div class="comment-box">
+          <div style="font-size:0.8rem; font-weight:700; margin-bottom:8px;">Bình luận (${(poem.comments || []).length})</div>
           ${
             poem.allowComments !== false
-              ? `<form onsubmit="submitPoemComment(event, '${poem.id}')" style="display:flex; gap:8px; margin-bottom:16px;">
-                  <input type="text" id="readerCommentInput" class="input-field" placeholder="Viết đôi dòng cảm nhận về bài thơ..." required />
-                  <button type="submit" class="btn-pill primary">Gửi</button>
+              ? `<form onsubmit="submitPoemComment(event, '${poem.id}')" style="display:flex; gap:6px; margin-bottom:12px;">
+                  <input type="text" id="readerCommentInput" class="input-glass" placeholder="Viết cảm nhận..." required />
+                  <button type="submit" class="pill-action accent">Gửi</button>
                 </form>`
-              : `<p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Tác giả đã tạm đóng bình luận cho tác phẩm này.</p>`
+              : `<div style="font-size:0.78rem; color:var(--text-muted); margin-bottom:10px;">Bình luận đang tắt.</div>`
           }
-          <div>${commentsHtml || '<p style="font-size:0.85rem; color:var(--text-muted);">Chưa có bình luận nào. Hãy là người đầu tiên chia sẻ cảm xúc.</p>'}</div>
+          ${commentsHtml || `<div style="font-size:0.78rem; color:var(--text-muted);">Chưa có bình luận.</div>`}
         </div>
       `;
     }
@@ -2112,19 +2394,17 @@
       const input = document.getElementById("readerCommentInput");
       const text = input.value.trim();
       if (!text) return;
-
       const poem = appState.poems.find((p) => p.id === poemId);
       if (!poem) return;
 
-      const currentUser = getLoggedUser();
-      const commenterName = currentUser ? currentUser.name : "Độc giả ẩn danh";
+      const user = getLoggedUser();
       const now = new Date();
       const dateStr = `${String(now.getDate()).padStart(2, "0")}/${String(now.getMonth() + 1).padStart(2, "0")}/${now.getFullYear()}`;
 
       if (!poem.comments) poem.comments = [];
       poem.comments.unshift({
         id: "c-" + Date.now(),
-        authorName: commenterName,
+        authorName: user ? user.name : "Bạn đọc",
         text,
         createdAt: dateStr
       });
@@ -2132,12 +2412,12 @@
       pushDataToFirebase();
       renderReaderContent(poem);
       renderPoetryFeed();
-      showToast("Đã gửi bình luận của bạn");
+      showToast("Đã gửi bình luận");
     }
 
     function closeReaderModal() {
-      document.getElementById("readerModalOverlay").classList.remove("open");
-      document.getElementById("readerModalBox").classList.remove("zen-active");
+      document.getElementById("readerModalOverlay").classList.remove("active");
+      document.getElementById("readerModalBox").classList.remove("zen-mode");
       currentReaderPoemId = null;
     }
 
@@ -2146,58 +2426,48 @@
     }
 
     function toggleZenMode() {
-      const box = document.getElementById("readerModalBox");
-      const btn = document.getElementById("zenModeBtn");
-      const isZen = box.classList.toggle("zen-active");
-      btn.textContent = isZen ? "✕ Thoát Zen Mode" : "🧘 Zen Mode";
+      document.getElementById("readerModalBox").classList.toggle("zen-mode");
     }
 
     function changePoemFontSize(delta) {
       const root = document.documentElement;
-      const current = parseFloat(getComputedStyle(root).getPropertyValue("--poem-font-size")) || 1.125;
-      const next = Math.min(1.65, Math.max(0.95, current + delta));
+      const cur = parseFloat(getComputedStyle(root).getPropertyValue("--poem-font-size")) || 1.06;
+      const next = Math.min(1.55, Math.max(0.92, cur + delta));
       root.style.setProperty("--poem-font-size", `${next}rem`);
     }
 
     function navigatePoem(step) {
-      if (!currentReaderPoemId) return;
+      if (!currentReaderPoemId || !appState.poems.length) return;
       const idx = appState.poems.findIndex((p) => p.id === currentReaderPoemId);
       if (idx === -1) return;
       const nextIdx = (idx + step + appState.poems.length) % appState.poems.length;
       openReaderModal(appState.poems[nextIdx].id);
     }
 
-    // Thẻ trích dẫn (Quote Card)
     function openQuoteModal(poemId) {
       const poem = appState.poems.find((p) => p.id === poemId);
       if (!poem) return;
       const verse =
         poem.highlightVerse ||
-        poem.content
-          .split("\n")
-          .filter((l) => l.trim())
-          .slice(0, 4)
-          .join("\n");
-      currentQuoteToCopy = `"${verse}"\n— ${poem.title} (Thiên Minh | w.poetry)`;
+        poem.content.split("\n").map((l) => l.trim()).filter(Boolean).slice(0, 4).join("\n");
+      currentQuoteToCopy = `"${verse}"\n— ${poem.title} (Thiên Minh · w.poetry)`;
       document.getElementById("quoteCardText").textContent = verse;
       document.getElementById("quoteCardTitle").textContent = `— ${poem.title} —`;
-      document.getElementById("quoteModalOverlay").classList.add("open");
+      document.getElementById("quoteModalOverlay").classList.add("active");
     }
 
     function closeQuoteModal() {
-      document.getElementById("quoteModalOverlay").classList.remove("open");
+      document.getElementById("quoteModalOverlay").classList.remove("active");
     }
 
     function copyCurrentQuote() {
       if (!currentQuoteToCopy) return;
-      navigator.clipboard.writeText(currentQuoteToCopy).then(() => {
-        showToast("Đã sao chép trích dẫn thơ vào bộ nhớ tạm");
-      });
+      navigator.clipboard.writeText(currentQuoteToCopy).then(() => showToast("Đã sao chép trích dẫn"));
     }
 
-    // ========================================================================
-    // 7. ĐĂNG NHẬP ADMIN & ĐỘC GIẢ (GOOGLE / ZALO / FACEBOOK) + LƯU TRẠNG THÁI
-    // ========================================================================
+    /* ========================================================================
+       6. AUTH & STUDIO ADMIN
+       ======================================================================== */
     function getLoggedUser() {
       try {
         return JSON.parse(localStorage.getItem(STORAGE_KEYS.CURRENT_USER) || "null");
@@ -2206,12 +2476,9 @@
       }
     }
 
-    function setLoggedUser(userObj) {
-      if (userObj) {
-        localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(userObj));
-      } else {
-        localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
-      }
+    function setLoggedUser(u) {
+      if (u) localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(u));
+      else localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
       renderProfileTab();
     }
 
@@ -2219,332 +2486,249 @@
       e.preventDefault();
       const email = document.getElementById("adminEmailInput").value.trim();
       const pwd = document.getElementById("adminPwdInput").value.trim();
-      const adminCfg = appState.adminAccount;
-
-      if (email.toLowerCase() === adminCfg.email.toLowerCase() && pwd === adminCfg.password) {
+      if (email.toLowerCase() === appState.adminAccount.email.toLowerCase() && pwd === appState.adminAccount.password) {
         setLoggedUser({
           role: "admin",
           provider: "Admin",
-          email: adminCfg.email,
           name: appState.author.name,
           avatar: appState.author.avatar
         });
-        showToast("Chào mừng Nhật Huy (Thiên Minh) quay trở lại!");
+        showToast("Đã đăng nhập quản trị");
       } else {
-        showToast("Email hoặc mật khẩu quản trị chưa chính xác.");
+        showToast("Thông tin đăng nhập chưa đúng");
       }
     }
 
     function loginWithProvider(provider) {
-      // Tạo hồ sơ độc giả & lưu bền vững vào localStorage cho các lần truy cập sau
-      const defaultAvatars = {
-        Google: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
-        Zalo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
-        Facebook: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80"
-      };
       setLoggedUser({
         role: "user",
         provider,
         name: `Bạn đọc (${provider})`,
-        avatar: defaultAvatars[provider] || appState.author.avatar
+        avatar: appState.author.avatar
       });
-      showToast(`Đã đăng nhập qua ${provider} và lưu thông tin cho lần sau`);
+      showToast(`Đã đăng nhập qua ${provider}`);
     }
 
     function logoutUser() {
       setLoggedUser(null);
-      showToast("Đã đăng xuất khỏi tài khoản");
+      showToast("Đã đăng xuất");
     }
 
     function renderProfileTab() {
       const user = getLoggedUser();
       const authBox = document.getElementById("authContainer");
       const loggedBox = document.getElementById("loggedInContainer");
-      const adminStudio = document.getElementById("adminStudio");
-      const manageColBtn = document.getElementById("manageCollectionsBtn");
+      const studio = document.getElementById("adminStudio");
 
       if (!user) {
         authBox.classList.remove("hidden");
         loggedBox.classList.add("hidden");
-        adminStudio.classList.add("hidden");
-        if (manageColBtn) manageColBtn.classList.add("hidden");
+        studio.classList.add("hidden");
         return;
       }
 
       authBox.classList.add("hidden");
       loggedBox.classList.remove("hidden");
-
       document.getElementById("userProfileAvatar").src = user.avatar || appState.author.avatar;
       document.getElementById("userProfileName").textContent = user.name;
       document.getElementById("userProfileBadge").textContent =
-        user.role === "admin" ? "Quản trị viên · Thi gia Thiên Minh" : `Thành viên kết nối qua ${user.provider}`;
-
+        user.role === "admin" ? "Quản trị viên · Thiên Minh" : `Kết nối ${user.provider}`;
       document.getElementById("editProfileName").value = user.name;
       document.getElementById("editProfileAvatar").value = user.avatar || "";
 
       if (user.role === "admin") {
-        adminStudio.classList.remove("hidden");
-        if (manageColBtn) manageColBtn.classList.remove("hidden");
+        studio.classList.remove("hidden");
         renderAdminStudio();
       } else {
-        adminStudio.classList.add("hidden");
-        if (manageColBtn) manageColBtn.classList.add("hidden");
+        studio.classList.add("hidden");
       }
     }
 
     function handleAvatarUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        document.getElementById("editProfileAvatar").value = reader.result;
-        showToast("Đã tải ảnh lên, hãy bấm 'Lưu thay đổi hồ sơ'");
+      const f = e.target.files?.[0];
+      if (!f) return;
+      const r = new FileReader();
+      r.onload = () => {
+        document.getElementById("editProfileAvatar").value = r.result;
+        showToast("Đã tải ảnh lên");
       };
-      reader.readAsDataURL(file);
+      r.readAsDataURL(f);
     }
 
     function saveProfileChanges() {
       const user = getLoggedUser();
       if (!user) return;
-      const newName = document.getElementById("editProfileName").value.trim();
-      const newAvatar = document.getElementById("editProfileAvatar").value.trim();
-
-      if (newName) user.name = newName;
-      if (newAvatar) user.avatar = newAvatar;
-
+      const name = document.getElementById("editProfileName").value.trim();
+      const avatar = document.getElementById("editProfileAvatar").value.trim();
+      if (name) user.name = name;
+      if (avatar) user.avatar = avatar;
       if (user.role === "admin") {
         appState.author.name = user.name;
         appState.author.avatar = user.avatar;
         pushDataToFirebase();
-        renderHomeTab();
-        renderPoetryFeed();
+        refreshAllUI();
       }
-
       setLoggedUser(user);
-      showToast("Đã lưu thay đổi hồ sơ cá nhân");
+      showToast("Đã lưu hồ sơ");
     }
 
-    // ========================================================================
-    // 8. ADMIN STUDIO TOÀN DIỆN: SỬA MỌI THÔNG TIN & ĐỒNG BỘ FIREBASE
-    // ========================================================================
     function renderAdminStudio() {
-      const site = appState.siteInfo || {};
-      document.getElementById("adminEditSiteTitle").value = site.title || "Thiên Minh | w.poetry";
-      document.getElementById("adminEditShareUrl").value = site.shareUrl || "";
-      document.getElementById("adminEditFeaturedHeading").value = site.featuredHeading || "Tuyển tập nổi bật";
-      document.getElementById("adminEditGuestbookTitle").value = site.guestbookTitle || "Gửi lời nhắn cho Thiên Minh";
-      document.getElementById("adminEditGuestbookSubtitle").value = site.guestbookSubtitle || "";
+      const s = appState.siteInfo || {};
+      document.getElementById("adminEditSiteTitle").value = s.title || "";
+      document.getElementById("adminEditShareUrl").value = s.shareUrl || "";
+      document.getElementById("adminEditFeaturedHeading").value = s.featuredHeading || "";
+      document.getElementById("adminEditGuestbookTitle").value = s.guestbookTitle || "";
+      document.getElementById("adminEditGuestbookSubtitle").value = s.guestbookSubtitle || "";
 
-      const author = appState.author;
-      document.getElementById("adminEditAuthorName").value = author.name || "";
-      document.getElementById("adminEditPenName").value = author.penName || "";
-      document.getElementById("adminEditAuthorAvatar").value = author.avatar || "";
-      document.getElementById("adminEditBioLabel").value = author.bioLabel || "";
-      document.getElementById("adminEditBioUrl").value = author.bioUrl || "";
-      document.getElementById("adminEditIntro").value = author.introParagraph || "";
-      document.getElementById("adminEditPhilosophy").value = author.philosophy || "";
-
-      document.getElementById("adminEditMilestones").value = (author.milestones || [])
-        .map((m) => `${m.year} | ${m.text}`)
-        .join("\n");
-
-      document.getElementById("adminEditSocials").value = (author.socials || [])
-        .map((s) => `${s.label} | ${s.url}`)
-        .join("\n");
+      const a = appState.author;
+      document.getElementById("adminEditAuthorName").value = a.name || "";
+      document.getElementById("adminEditPenName").value = a.penName || "";
+      document.getElementById("adminEditAuthorAvatar").value = a.avatar || "";
+      document.getElementById("adminEditBioLabel").value = a.bioLabel || "";
+      document.getElementById("adminEditBioUrl").value = a.bioUrl || "";
+      document.getElementById("adminEditIntro").value = a.introParagraph || "";
+      document.getElementById("adminEditPhilosophy").value = a.philosophy || "";
+      document.getElementById("adminEditMilestones").value = (a.milestones || []).map((m) => `${m.year} | ${m.text}`).join("\n");
+      document.getElementById("adminEditSocials").value = (a.socials || []).map((x) => `${x.label} | ${x.url}`).join("\n");
 
       document.getElementById("adminEditLoginEmail").value = appState.adminAccount.email || "";
       document.getElementById("adminEditLoginPwd").value = appState.adminAccount.password || "";
 
-      // Danh sách tập thơ (Cho phép đổi tên trực tiếp hoặc xóa)
-      const colList = document.getElementById("adminCollectionList");
-      colList.innerHTML = appState.collections
-        .map((c) => {
-          const canDelete = c.id !== "all";
-          return `
-            <div style="display:flex; align-items:center; gap:8px;">
-              <input type="text" class="input-field" value="${escapeHtml(c.name)}" onchange="renameCollection('${c.id}', this.value)" style="padding:7px 12px; font-size:0.85rem;" />
-              ${canDelete ? `<button class="btn-pill" style="color:#d9534f; padding:6px 12px;" onclick="deleteCollection('${c.id}')">Xóa</button>` : `<span class="poem-badge">Mặc định</span>`}
-            </div>
-          `;
-        })
+      document.getElementById("adminCollectionList").innerHTML = appState.collections
+        .map((c) => `
+          <div style="display:flex; gap:6px; align-items:center;">
+            <input type="text" class="input-glass" value="${escapeHtml(c.name)}" onchange="renameCollection('${c.id}', this.value)" style="padding:7px 11px; font-size:0.8rem;" />
+            ${c.id !== "all" ? `<button class="pill-action" style="color:var(--danger);" onclick="deleteCollection('${c.id}')">Xóa</button>` : ""}
+          </div>
+        `)
         .join("");
 
-      // Danh sách bài thơ
-      const poemList = document.getElementById("adminPoemList");
-      poemList.innerHTML = appState.poems
-        .map(
-          (p) => `
-          <div class="admin-poem-row">
-            <div>
-              <strong>${escapeHtml(p.title)}</strong>
-              <div style="font-size:0.78rem; color:var(--text-muted);">
-                ${escapeHtml(p.createdAt)} · 👍 ${p.likes || 0} · ❤️ ${p.favorites || 0} · 💬 ${(p.comments || []).length}
-              </div>
+      document.getElementById("adminPoemList").innerHTML = appState.poems
+        .map((p) => `
+          <div class="admin-poem-item">
+            <div style="min-width:0;">
+              <div style="font-size:0.86rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(p.title)}</div>
+              <div style="font-size:0.72rem; color:var(--text-muted);">${escapeHtml(p.createdAt)} · ♥ ${p.favorites || 0} · 💬 ${(p.comments || []).length}</div>
             </div>
-            <div style="display:flex; gap:8px;">
-              <button class="btn-pill" onclick="openReaderModal('${p.id}', true)">Bình luận</button>
-              <button class="btn-pill" onclick="openPoemEditor('${p.id}')">Sửa</button>
-              <button class="btn-pill" style="color:#d9534f;" onclick="deletePoem('${p.id}')">Xóa</button>
+            <div style="display:flex; gap:6px; flex-shrink:0;">
+              <button class="pill-action" onclick="openPoemEditor('${p.id}')">Sửa</button>
+              <button class="pill-action" style="color:var(--danger);" onclick="deletePoem('${p.id}')">Xóa</button>
             </div>
           </div>
-        `
-        )
+        `)
         .join("");
     }
 
     function saveSiteGeneralInfo() {
-      if (!appState.siteInfo) appState.siteInfo = {};
-      appState.siteInfo.title = document.getElementById("adminEditSiteTitle").value.trim() || "Thiên Minh | w.poetry";
-      appState.siteInfo.shareUrl = document.getElementById("adminEditShareUrl").value.trim();
-      appState.siteInfo.featuredHeading = document.getElementById("adminEditFeaturedHeading").value.trim() || "Tuyển tập nổi bật";
-      appState.siteInfo.guestbookTitle = document.getElementById("adminEditGuestbookTitle").value.trim() || "Gửi lời nhắn cho Thiên Minh";
-      appState.siteInfo.guestbookSubtitle = document.getElementById("adminEditGuestbookSubtitle").value.trim();
+      appState.siteInfo = {
+        title: document.getElementById("adminEditSiteTitle").value.trim() || "Thiên Minh | w.poetry",
+        shareUrl: document.getElementById("adminEditShareUrl").value.trim(),
+        featuredHeading: document.getElementById("adminEditFeaturedHeading").value.trim() || "Tuyển tập nổi bật",
+        guestbookTitle: document.getElementById("adminEditGuestbookTitle").value.trim() || "Gửi lời nhắn cho Thiên Minh",
+        guestbookSubtitle: document.getElementById("adminEditGuestbookSubtitle").value.trim()
+      };
       pushDataToFirebase();
       refreshAllUI();
-      showToast("Đã cập nhật & đồng bộ cài đặt chung trang web!");
+      showToast("Đã cập nhật cài đặt chung");
     }
 
     function handleAdminAuthorAvatarUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        document.getElementById("adminEditAuthorAvatar").value = reader.result;
-        showToast("Đã tải ảnh đại diện tác giả, hãy bấm 'Cập nhật & Đồng bộ Home Tab'");
+      const f = e.target.files?.[0];
+      if (!f) return;
+      const r = new FileReader();
+      r.onload = () => {
+        document.getElementById("adminEditAuthorAvatar").value = r.result;
+        showToast("Đã tải ảnh tác giả");
       };
-      reader.readAsDataURL(file);
+      r.readAsDataURL(f);
     }
 
     function saveAuthorHomeInfo() {
-      const name = document.getElementById("adminEditAuthorName").value.trim();
-      const penName = document.getElementById("adminEditPenName").value.trim();
-      const avatar = document.getElementById("adminEditAuthorAvatar").value.trim();
-      const bioLabel = document.getElementById("adminEditBioLabel").value.trim();
-      const bioUrl = document.getElementById("adminEditBioUrl").value.trim();
-      const intro = document.getElementById("adminEditIntro").value.trim();
-      const philosophy = document.getElementById("adminEditPhilosophy").value.trim();
+      appState.author.name = document.getElementById("adminEditAuthorName").value.trim() || appState.author.name;
+      appState.author.penName = document.getElementById("adminEditPenName").value.trim() || appState.author.penName;
+      appState.author.avatar = document.getElementById("adminEditAuthorAvatar").value.trim() || appState.author.avatar;
+      appState.author.bioLabel = document.getElementById("adminEditBioLabel").value.trim();
+      appState.author.bioUrl = document.getElementById("adminEditBioUrl").value.trim();
+      appState.author.introParagraph = document.getElementById("adminEditIntro").value.trim();
+      appState.author.philosophy = document.getElementById("adminEditPhilosophy").value.trim();
 
-      if (name) appState.author.name = name;
-      if (penName) appState.author.penName = penName;
-      if (avatar) appState.author.avatar = avatar;
-      if (bioLabel) appState.author.bioLabel = bioLabel;
-      if (bioUrl) appState.author.bioUrl = bioUrl;
-      if (intro) appState.author.introParagraph = intro;
-      appState.author.philosophy = philosophy;
+      appState.author.milestones = document.getElementById("adminEditMilestones").value
+        .split("\n")
+        .map((line) => line.split("|"))
+        .filter((parts) => parts.length >= 2)
+        .map((parts) => ({ year: parts[0].trim(), text: parts.slice(1).join("|").trim() }));
 
-      const rawMilestones = document.getElementById("adminEditMilestones").value.trim();
-      appState.author.milestones = rawMilestones
-        ? rawMilestones.split("\n").map((line) => {
-            const parts = line.split("|");
-            return {
-              year: (parts[0] || "").trim(),
-              text: (parts.slice(1).join("|") || "").trim()
-            };
-          }).filter((item) => item.year || item.text)
-        : [];
-
-      const rawSocials = document.getElementById("adminEditSocials").value.trim();
-      appState.author.socials = rawSocials
-        ? rawSocials.split("\n").map((line) => {
-            const parts = line.split("|");
-            return {
-              label: (parts[0] || "Liên kết").trim(),
-              url: (parts.slice(1).join("|") || "#").trim()
-            };
-          }).filter((item) => item.url)
-        : [];
-
-      // Đồng bộ luôn với hồ sơ đăng nhập hiện tại của Admin
-      const currentUser = getLoggedUser();
-      if (currentUser && currentUser.role === "admin") {
-        currentUser.name = appState.author.name;
-        currentUser.avatar = appState.author.avatar;
-        setLoggedUser(currentUser);
-      }
+      appState.author.socials = document.getElementById("adminEditSocials").value
+        .split("\n")
+        .map((line) => line.split("|"))
+        .filter((parts) => parts.length >= 2)
+        .map((parts) => ({ label: parts[0].trim(), url: parts.slice(1).join("|").trim() }));
 
       pushDataToFirebase();
       refreshAllUI();
-      showToast("Đã cập nhật & đồng bộ toàn bộ Home Tab!");
+      showToast("Đã cập nhật thông tin thi gia");
     }
 
     function saveAdminCredentials() {
-      const newEmail = document.getElementById("adminEditLoginEmail").value.trim();
-      const newPwd = document.getElementById("adminEditLoginPwd").value.trim();
-      if (!newEmail || !newPwd) {
-        showToast("Email và mật khẩu Admin không được để trống.");
-        return;
-      }
-      appState.adminAccount.email = newEmail;
-      appState.adminAccount.password = newPwd;
+      const email = document.getElementById("adminEditLoginEmail").value.trim();
+      const pwd = document.getElementById("adminEditLoginPwd").value.trim();
+      if (!email || !pwd) return;
+      appState.adminAccount.email = email;
+      appState.adminAccount.password = pwd;
       pushDataToFirebase();
-      showToast("Đã cập nhật thông tin đăng nhập Admin!");
+      showToast("Đã cập nhật tài khoản Admin");
     }
 
     function addCollectionFromAdmin() {
       const input = document.getElementById("newCollectionName");
       const name = input.value.trim();
       if (!name) return;
-      const id = "col-" + Date.now();
-      appState.collections.push({ id, name });
+      appState.collections.push({ id: "col-" + Date.now(), name });
       input.value = "";
       pushDataToFirebase();
       refreshAllUI();
-      showToast("Đã thêm tập thơ mới");
+      showToast("Đã thêm tập thơ");
     }
 
-    function renameCollection(colId, newName) {
-      const trimmed = newName.trim();
-      if (!trimmed) return;
-      const col = appState.collections.find((c) => c.id === colId);
-      if (col) {
-        col.name = trimmed;
+    function renameCollection(id, name) {
+      const c = appState.collections.find((x) => x.id === id);
+      if (c && name.trim()) {
+        c.name = name.trim();
         pushDataToFirebase();
         refreshAllUI();
         showToast("Đã đổi tên tập thơ");
       }
     }
 
-    function promptAddCollection() {
-      const name = prompt("Nhập tên tập thơ / chủ đề mới:");
-      if (!name || !name.trim()) return;
-      appState.collections.push({ id: "col-" + Date.now(), name: name.trim() });
-      pushDataToFirebase();
-      refreshAllUI();
-      showToast("Đã thêm tập thơ mới");
-    }
-
-    function deleteCollection(colId) {
-      if (!confirm("Xóa tập thơ này? Các bài thơ bên trong vẫn được giữ lại ở mục Tất cả.")) return;
-      appState.collections = appState.collections.filter((c) => c.id !== colId);
-      if (currentCollection === colId) currentCollection = "all";
+    function deleteCollection(id) {
+      appState.collections = appState.collections.filter((x) => x.id !== id);
+      if (currentCollection === id) currentCollection = "all";
       pushDataToFirebase();
       refreshAllUI();
       showToast("Đã xóa tập thơ");
     }
 
     function deleteComment(poemId, commentId) {
-      if (!confirm("Xóa bình luận này?")) return;
       const poem = appState.poems.find((p) => p.id === poemId);
       if (!poem) return;
       poem.comments = (poem.comments || []).filter((c) => c.id !== commentId);
       pushDataToFirebase();
       renderReaderContent(poem);
       renderPoetryFeed();
-      renderAdminStudio();
       showToast("Đã xóa bình luận");
     }
 
     function openPoemEditor(poemId = null) {
-      const select = document.getElementById("editPoemCollection");
-      select.innerHTML = appState.collections
+      const sel = document.getElementById("editPoemCollection");
+      sel.innerHTML = appState.collections
         .filter((c) => c.id !== "all")
         .map((c) => `<option value="${c.id}">${escapeHtml(c.name)}</option>`)
         .join("");
 
       if (poemId) {
-        const p = appState.poems.find((item) => item.id === poemId);
+        const p = appState.poems.find((x) => x.id === poemId);
         if (!p) return;
-        document.getElementById("editorModalTitle").textContent = "Chỉnh sửa tác phẩm";
+        document.getElementById("editorModalTitle").textContent = "Chỉnh sửa bài thơ";
         document.getElementById("editPoemId").value = p.id;
         document.getElementById("editPoemTitle").value = p.title;
         document.getElementById("editPoemCollection").value = p.collectionId;
@@ -2577,23 +2761,22 @@
         document.getElementById("editPoemFeatured").checked = true;
         document.getElementById("editPoemAllowComments").checked = true;
       }
-
-      document.getElementById("editorModalOverlay").classList.add("open");
+      document.getElementById("editorModalOverlay").classList.add("active");
     }
 
     function closePoemEditor() {
-      document.getElementById("editorModalOverlay").classList.remove("open");
+      document.getElementById("editorModalOverlay").classList.remove("active");
     }
 
     function handlePoemImageUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        document.getElementById("editPoemCover").value = reader.result;
-        showToast("Đã chèn ảnh vào bài thơ");
+      const f = e.target.files?.[0];
+      if (!f) return;
+      const r = new FileReader();
+      r.onload = () => {
+        document.getElementById("editPoemCover").value = r.result;
+        showToast("Đã tải ảnh minh họa");
       };
-      reader.readAsDataURL(file);
+      r.readAsDataURL(f);
     }
 
     function savePoemFromEditor(e) {
@@ -2617,7 +2800,8 @@
         likes: parseInt(document.getElementById("editPoemLikes").value, 10) || 0,
         favorites: parseInt(document.getElementById("editPoemFavs").value, 10) || 0,
         featured: document.getElementById("editPoemFeatured").checked,
-        allowComments: document.getElementById("editPoemAllowComments").checked
+        allowComments: document.getElementById("editPoemAllowComments").checked,
+        comments: []
       };
 
       if (id) {
@@ -2627,137 +2811,117 @@
           appState.poems[idx] = payload;
         }
       } else {
-        payload.comments = [];
         appState.poems.unshift(payload);
       }
 
       pushDataToFirebase();
       closePoemEditor();
       refreshAllUI();
-      showToast("Đã lưu & đồng bộ bài thơ thành công!");
+      showToast("Đã lưu bài thơ");
     }
 
-    function deletePoem(poemId) {
-      if (!confirm("Bạn chắc chắn muốn xóa bài thơ này?")) return;
-      appState.poems = appState.poems.filter((p) => p.id !== poemId);
+    function deletePoem(id) {
+      if (!confirm("Xóa bài thơ này?")) return;
+      appState.poems = appState.poems.filter((p) => p.id !== id);
       pushDataToFirebase();
       refreshAllUI();
       showToast("Đã xóa bài thơ");
     }
 
-    // ========================================================================
-    // 9. GỬI LỜI NHẮN QUA EMAILJS (HOẶC LƯU THÔNG BÁO)
-    // ========================================================================
-    function handleGuestbookSubmit(e) {
-      e.preventDefault();
-      const senderName = document.getElementById("msgSenderName").value.trim();
-      const senderEmail = document.getElementById("msgSenderEmail").value.trim();
-      const message = document.getElementById("msgContent").value.trim();
+    /* ========================================================================
+       7. GUESTBOOK, QR & SHARE LINK
+       ======================================================================== */
+    function openGuestbookModal() {
+      document.getElementById("guestbookModalOverlay").classList.add("active");
+    }
 
+    function closeGuestbookModal() {
+      document.getElementById("guestbookModalOverlay").classList.remove("active");
+    }
+
+    function sendMessagePayload(name, email, message, onDone) {
       const ejs = appState.emailjsConfig;
       if (window.emailjs && ejs && ejs.publicKey && !ejs.publicKey.includes("YOUR_EMAILJS")) {
-        emailjs
-          .send(ejs.serviceId, ejs.templateId, {
-            from_name: senderName,
-            from_email: senderEmail,
-            message,
-            to_email: ejs.receiverEmail
-          })
-          .then(() => {
-            showToast("Đã gửi lời nhắn trực tiếp đến Thiên Minh!");
-            e.target.reset();
-          })
-          .catch(() => {
-            showToast("Đã ghi nhận lời nhắn của bạn!");
-            e.target.reset();
-          });
+        emailjs.send(ejs.serviceId, ejs.templateId, {
+          from_name: name,
+          from_email: email || "",
+          message,
+          to_email: ejs.receiverEmail || "lnh.quii@gmail.com"
+        }).finally(() => {
+          showToast("Đã gửi lời nhắn");
+          if (onDone) onDone();
+        });
       } else {
-        showToast(`Cảm ơn ${senderName}, lời nhắn đã được gửi đến Thiên Minh!`);
-        e.target.reset();
+        showToast("Đã gửi lời nhắn");
+        if (onDone) onDone();
       }
     }
 
-    // ========================================================================
-    // CHIA SẺ LIÊN KẾT & MÃ QR TÍCH HỢP (Thiên Minh | w.poetry)
-    // ========================================================================
+    function handleGuestbookSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById("msgSenderName").value.trim();
+      const email = document.getElementById("msgSenderEmail").value.trim();
+      const msg = document.getElementById("msgContent").value.trim();
+      if (!name || !msg) return;
+      sendMessagePayload(name, email, msg, () => e.target.reset());
+    }
+
+    function handleModalGuestbookSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById("modalMsgName").value.trim();
+      const msg = document.getElementById("modalMsgContent").value.trim();
+      if (!name || !msg) return;
+      sendMessagePayload(name, "", msg, () => {
+        e.target.reset();
+        closeGuestbookModal();
+      });
+    }
+
     function getShareableSiteUrl() {
-      const configuredUrl = appState.siteInfo && appState.siteInfo.shareUrl ? appState.siteInfo.shareUrl.trim() : "";
-      return configuredUrl || window.location.href.split("#")[0];
+      return (appState.siteInfo && appState.siteInfo.shareUrl && appState.siteInfo.shareUrl.trim()) || window.location.href.split("#")[0];
     }
 
     function copyWebLink() {
       const url = getShareableSiteUrl();
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(url).then(() => {
-          showToast("Đã sao chép liên kết Thiên Minh | w.poetry!");
-        }).catch(() => fallbackCopyText(url));
-      } else {
-        fallbackCopyText(url);
-      }
-    }
-
-    function fallbackCopyText(text) {
-      const temp = document.createElement("input");
-      temp.value = text;
-      document.body.appendChild(temp);
-      temp.select();
-      document.execCommand("copy");
-      document.body.removeChild(temp);
-      showToast("Đã sao chép liên kết Thiên Minh | w.poetry!");
+      navigator.clipboard.writeText(url).then(() => showToast("Đã sao chép liên kết"));
     }
 
     function openQrModal() {
       const url = getShareableSiteUrl();
-      const input = document.getElementById("shareUrlInput");
-      const qrContainer = document.getElementById("qrcodeCanvas");
-      if (input) input.value = url;
-      if (qrContainer) {
-        qrContainer.innerHTML = "";
-        if (window.QRCode) {
-          new QRCode(qrContainer, {
-            text: url,
-            width: 196,
-            height: 196,
-            colorDark: "#2b2623",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.H
-          });
-        } else {
-          qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=196x196&data=${encodeURIComponent(url)}" alt="QR Code" />`;
-        }
+      document.getElementById("shareUrlInput").value = url;
+      const box = document.getElementById("qrcodeCanvas");
+      box.innerHTML = "";
+      if (window.QRCode) {
+        new QRCode(box, {
+          text: url,
+          width: 152,
+          height: 152,
+          colorDark: "#141f16",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.H
+        });
       }
-      document.getElementById("qrModalOverlay").classList.add("open");
+      document.getElementById("qrModalOverlay").classList.add("active");
     }
 
     function closeQrModal() {
-      document.getElementById("qrModalOverlay").classList.remove("open");
+      document.getElementById("qrModalOverlay").classList.remove("active");
     }
 
     function downloadQrImage() {
       const canvas = document.querySelector("#qrcodeCanvas canvas");
       const img = document.querySelector("#qrcodeCanvas img");
-      let dataUrl = "";
-      if (canvas) {
-        dataUrl = canvas.toDataURL("image/png");
-      } else if (img && img.src) {
-        dataUrl = img.src;
-      }
-      if (!dataUrl) {
-        showToast("Không thể tạo tệp ảnh QR lúc này.");
-        return;
-      }
-      const link = document.createElement("a");
-      link.href = dataUrl;
-      link.download = "Thien-Minh-w-poetry-QR.png";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      showToast("Đã tải xuống mã QR (Thien-Minh-w-poetry-QR.png)");
+      const src = canvas ? canvas.toDataURL("image/png") : img?.src;
+      if (!src) return;
+      const a = document.createElement("a");
+      a.href = src;
+      a.download = "Thien-Minh-w-poetry-QR.png";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast("Đã tải mã QR");
     }
 
-    // ========================================================================
-    // TIỆN ÍCH CHUNG & KHỞI CHẠY ỨNG DỤNG
-    // ========================================================================
     function escapeHtml(str) {
       if (!str) return "";
       return String(str)
@@ -2768,11 +2932,11 @@
     }
 
     function showToast(msg) {
-      const toast = document.getElementById("toast");
-      toast.textContent = msg;
-      toast.classList.add("show");
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.classList.add("show");
       clearTimeout(window.__toastTimer);
-      window.__toastTimer = setTimeout(() => toast.classList.remove("show"), 3200);
+      window.__toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
     }
 
     function refreshAllUI() {
@@ -2786,6 +2950,8 @@
       if (window.emailjs && appState.emailjsConfig && !appState.emailjsConfig.publicKey.includes("YOUR_EMAILJS")) {
         emailjs.init(appState.emailjsConfig.publicKey);
       }
+      initSpotlightAndDroplets();
+      initAmbientCanvas();
       updateDeviceClockAndTheme();
       setInterval(updateDeviceClockAndTheme, 15000);
       initFirebaseSync();
