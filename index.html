@@ -18,7 +18,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <!-- Dữ liệu tách biệt -->
-  <script src="data-v3.js"></script>
+  <script src="./data.js"></script>
 
   <style>
     /* ==========================================================================
@@ -1610,7 +1610,36 @@
       THEME_MANUAL: "w_poetry_theme_manual_v1"
     };
 
-    let appState = JSON.parse(JSON.stringify(window.POETRY_DATA));
+    let appState = null;
+    if (window.POETRY_DATA) {
+      appState = JSON.parse(JSON.stringify(window.POETRY_DATA));
+    } else {
+      appState = {
+        siteInfo: {
+          title: "Thiên Minh | w.poetry",
+          shareUrl: "",
+          featuredHeading: "Tuyển tập nổi bật",
+          guestbookTitle: "Gửi lời nhắn cho Thiên Minh",
+          guestbookSubtitle: "Một vài dòng cảm nhận hoặc lời chào dịu dàng gửi đến góc viết của Nhật Huy."
+        },
+        firebaseConfig: { apiKey: "YOUR_FIREBASE_API_KEY" },
+        emailjsConfig: { publicKey: "YOUR_EMAILJS_PUBLIC_KEY" },
+        adminAccount: { email: "lnh.quii@gmail.com", password: "nhzt.wii100614", displayName: "Nhật Huy", penName: "Thiên Minh", role: "admin" },
+        author: {
+          name: "Nhật Huy",
+          penName: "Thiên Minh",
+          avatar: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=400&q=80",
+          bioLabel: "Nhật Huy | w.bio",
+          bioUrl: "https://nhztwiie.github.io/w",
+          introParagraph: "Tôi tên Nhật Huy. Nhằm muốn ẩn mình để hòa nhịp cùng những áng thơ, tôi quyết định chọn bút danh Thiên Minh.",
+          philosophy: "Thơ không cần ồn ào để chạm tới lòng người.",
+          milestones: [],
+          socials: []
+        },
+        collections: [{ id: "all", name: "Tất cả" }],
+        poems: []
+      };
+    }
     let currentCollection = "all";
     let currentReaderPoemId = null;
     let currentQuoteToCopy = "";
